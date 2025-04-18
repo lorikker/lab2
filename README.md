@@ -1,10 +1,9 @@
-# `SWISS CODE L.L.C Boilerplate v2`
+# `Fitness App`
 
 This is a boilerplate project scaffolding your next developing project.
 
 # Installation
 
-- Clone the repository from [our private GitHub repository](https://github.com/SWISS-CODE-L-L-C/boilerplate-v2).
 - Install dependencies:
 
 ```bash
