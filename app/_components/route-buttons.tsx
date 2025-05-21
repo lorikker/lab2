@@ -112,10 +112,11 @@ export const LogoutButton = () => {
   return (
     <form action={logout}>
       <Button
-        className="border border-neutral-200 bg-indigo-400 px-4 py-2 text-white shadow-sm hover:bg-indigo-900 focus-visible:outline-indigo-500 active:bg-indigo-600"
+        className="border border-[#D9D9D9] bg-[#2A2A2A] px-4 py-2 text-white shadow-sm hover:opacity-90 focus-visible:outline-[#D5FC51]"
         aria-disabled={pending}
       >
-        <PowerIcon className="h-7 w-7" />
+        <PowerIcon className="mr-2 h-5 w-5" />
+        <span>Logout</span>
       </Button>
     </form>
   );
