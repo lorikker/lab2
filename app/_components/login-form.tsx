@@ -11,13 +11,20 @@ import { Button } from "./button";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
+  const registered = searchParams.get("registered");
 
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState(
+    registered === "true"
+      ? "Registration successful! Please log in with your new account."
+      : "",
+  );
 
   const authenticate = async (formData: FormData) => {
     const email = formData.get("email");
@@ -43,40 +50,41 @@ export default function LoginForm() {
 
   return (
     <form action={authenticate} className="w-full space-y-3 px-10">
-      <h1 className="mb-3 text-2xl text-indigo-900">
-        Please log in to continue.
-      </h1>
+      <h1 className="mb-3 text-2xl font-bold text-[#2A2A2A]">Welcome Back</h1>
+      <p className="mb-6 text-center text-[#2A2A2A]">
+        Please log in to continue
+      </p>
 
       <div className="w-full">
         <div>
           <label
-            className="mt-5 mb-3 block text-xs font-medium text-indigo-900"
+            className="mt-5 mb-3 block text-xs font-medium text-[#2A2A2A]"
             htmlFor="email"
           >
             Email
           </label>
           <div className="relative">
             <input
-              className="peer block w-full rounded-md border border-indigo-200 py-[9px] pl-10 text-sm text-black placeholder:text-gray-500"
+              className="peer block w-full rounded-md border border-[#D9D9D9] py-[9px] pl-10 text-sm text-[#2A2A2A] placeholder:text-gray-500 focus:border-[#D5FC51] focus:ring-1 focus:ring-[#D5FC51] focus:outline-none"
               id="email"
               type="email"
               name="email"
               placeholder="Enter your email address"
               required
             />
-            <AtSymbolIcon className="pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2 text-indigo-500 peer-focus:text-indigo-700" />
+            <AtSymbolIcon className="pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2 text-[#2A2A2A] peer-focus:text-[#D5FC51]" />
           </div>
         </div>
         <div className="mt-4">
           <label
-            className="mt-5 mb-3 block text-xs font-medium text-indigo-900"
+            className="mt-5 mb-3 block text-xs font-medium text-[#2A2A2A]"
             htmlFor="password"
           >
             Password
           </label>
           <div className="relative">
             <input
-              className="peer block w-full rounded-md border border-indigo-200 py-[9px] pl-10 text-sm text-black placeholder:text-gray-500"
+              className="peer block w-full rounded-md border border-[#D9D9D9] py-[9px] pl-10 text-sm text-[#2A2A2A] placeholder:text-gray-500 focus:border-[#D5FC51] focus:ring-1 focus:ring-[#D5FC51] focus:outline-none"
               id="password"
               type="password"
               name="password"
@@ -84,7 +92,7 @@ export default function LoginForm() {
               required
               minLength={6}
             />
-            <KeyIcon className="pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2 text-indigo-500 peer-focus:text-indigo-700" />
+            <KeyIcon className="pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2 text-[#2A2A2A] peer-focus:text-[#D5FC51]" />
           </div>
         </div>
       </div>
@@ -98,6 +106,23 @@ export default function LoginForm() {
             </p>
           </>
         )}
+        {successMessage && (
+          <p aria-live="polite" className="text-sm text-green-600">
+            {successMessage}
+          </p>
+        )}
+      </div>
+
+      <div className="mt-4 mb-8 text-center">
+        <p className="text-sm text-[#2A2A2A]">
+          Don't have an account?{" "}
+          <Link
+            href="/register"
+            className="font-medium text-[#D5FC51] hover:underline"
+          >
+            Register here
+          </Link>
+        </p>
       </div>
     </form>
   );
@@ -108,11 +133,11 @@ function LoginButton() {
 
   return (
     <Button
-      className="w-full bg-indigo-400 text-white hover:bg-indigo-500 focus-visible:outline-indigo-500 active:bg-indigo-600"
+      className="w-full bg-[#D5FC51] text-[#2A2A2A] hover:opacity-90 focus-visible:outline-[#D5FC51] active:bg-[#D5FC51]/90"
       aria-disabled={pending}
     >
       Log in
-      <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+      <ArrowRightIcon className="ml-auto h-5 w-5 text-[#2A2A2A]" />
     </Button>
   );
 }
