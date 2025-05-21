@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import {
   CreatePageButton,
-  DashboardPageButton,
   DeletePostButton,
   EditPageButton,
-  HomePageButton,
   LogoutButton,
 } from "@/app/_components/route-buttons";
 import { fetchAllPosts } from "@/app/lib/data";
@@ -23,12 +21,8 @@ export default async function Page() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gray-50 py-8 font-sans">
+    <main className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center bg-gray-50 pt-8 font-sans">
       <div className="flex flex-col items-start justify-center gap-3">
-        <div className="flex w-full items-center justify-start gap-2">
-          <HomePageButton />
-          <DashboardPageButton />
-        </div>
         <div className="flex flex-col items-center justify-center gap-8 rounded-lg border border-neutral-200 bg-white px-4 py-8 shadow-sm lg:w-[600px]">
           <h1 className="text-center text-2xl font-bold text-indigo-900 lg:text-4xl">
             Posts
