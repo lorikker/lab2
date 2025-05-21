@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Ubuntu } from "next/font/google";
 import "./globals.css";
+import Header from "./_components/header";
+import Footer from "./_components/footer";
+import SessionProvider from "./_components/session-provider";
 
 const ubuntu = Ubuntu({
   variable: "--font-ubuntu-sans",
@@ -9,8 +12,8 @@ const ubuntu = Ubuntu({
 });
 
 export const metadata: Metadata = {
-  title: "Boilerplate v2 - SWISS CODE L.L.C.",
-  description: "Boilerplate for SWISS CODE L.L.C.",
+  title: "Fitness App",
+  description: "Fitness App.",
 };
 
 export default function RootLayout({
@@ -20,7 +23,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${ubuntu.variable} antialiased`}>{children}</body>
+      <body className={`${ubuntu.variable} antialiased`}>
+        <SessionProvider>
+          <Header />
+          <div className="flex min-h-screen flex-col">
+            <div className="flex-grow">{children}</div>
+            <Footer />
+          </div>
+        </SessionProvider>
+      </body>
     </html>
   );
 }
