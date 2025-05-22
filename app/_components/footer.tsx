@@ -9,21 +9,18 @@ export default function Footer() {
         <div className="grid gap-8 md:grid-cols-4">
           <div>
             <h3 className="mb-4 text-xl font-bold text-[#D5FC51]">
-              FitnessHub
+              SixStarFitness
             </h3>
             <p className="mb-4 text-[#D9D9D9]">
-              Transform your body, transform your life with our
-              state-of-the-art facilities and expert guidance.
+              Transform your body, transform your life with our state-of-the-art
+              facilities and expert guidance.
             </p>
           </div>
           <div>
             <h3 className="mb-4 text-xl font-bold text-white">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link
-                  href="/"
-                  className="text-[#D9D9D9] hover:text-[#D5FC51]"
-                >
+                <Link href="/" className="text-[#D9D9D9] hover:text-[#D5FC51]">
                   Home
                 </Link>
               </li>
@@ -112,7 +109,7 @@ export default function Footer() {
               <p className="mb-2 text-[#D9D9D9]">123 Fitness Street</p>
               <p className="mb-2 text-[#D9D9D9]">Workout City, WC 12345</p>
               <p className="mb-2 text-[#D9D9D9]">
-                Email: info@fitnesshub.com
+                Email: info@SixStarFitness.com
               </p>
               <p className="mb-2 text-[#D9D9D9]">Phone: (123) 456-7890</p>
             </address>
@@ -120,7 +117,7 @@ export default function Footer() {
         </div>
         <div className="mt-12 border-t border-gray-700 pt-8 text-center">
           <p className="text-[#D9D9D9]">
-            © {new Date().getFullYear()} FitnessHub. All rights reserved.
+            © {new Date().getFullYear()} SixStarFitness. All rights reserved.
           </p>
         </div>
       </div>
