@@ -27,7 +27,7 @@ export default function Home() {
           </p>
           <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
             <Link href="/membership" className="btn btn-primary">
-              Join Now
+              View Membership Plans
             </Link>
             <Link href="/about" className="btn btn-outline">
               Learn More
@@ -269,12 +269,28 @@ function PricingCard({
           </li>
         ))}
       </ul>
-      <Link
-        href="/membership"
-        className={`block w-full rounded-md py-2 text-center font-medium ${isPopular ? "bg-[#D5FC51] text-[#2A2A2A]" : "border border-[#D5FC51] text-[#2A2A2A]"}`}
-      >
-        Get Started
-      </Link>
+      <div className="flex flex-col space-y-2">
+        <Link
+          href={`/membership/${title.toLowerCase()}`}
+          className={`block w-full rounded-md py-2 text-center font-medium ${
+            isPopular
+              ? "bg-[#D5FC51] text-[#2A2A2A]"
+              : "border border-[#D5FC51] text-[#2A2A2A] hover:bg-[#D5FC51]"
+          }`}
+        >
+          View Plan Details
+        </Link>
+        <Link
+          href={`/membership/checkout?plan=${title.toLowerCase()}`}
+          className={`block w-full rounded-md py-2 text-center font-medium ${
+            isPopular
+              ? "border border-[#2A2A2A] text-[#2A2A2A] hover:bg-[#2A2A2A] hover:text-white"
+              : "bg-[#2A2A2A] text-white hover:opacity-90"
+          }`}
+        >
+          Join Now
+        </Link>
+      </div>
     </div>
   );
 }
