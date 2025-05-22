@@ -12,6 +12,7 @@ import { Button } from "./button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import PasswordInput from "./password-input";
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -106,45 +107,27 @@ export default function RegisterForm() {
         </div>
 
         <div className="mt-4">
-          <label
-            className="mt-5 mb-3 block text-xs font-medium text-[#2A2A2A]"
-            htmlFor="password"
-          >
-            Password
-          </label>
-          <div className="relative">
-            <input
-              className="peer block w-full rounded-md border border-[#D9D9D9] py-[9px] pl-10 text-sm text-[#2A2A2A] placeholder:text-gray-500 focus:border-[#D5FC51] focus:ring-1 focus:ring-[#D5FC51] focus:outline-none"
-              id="password"
-              type="password"
-              name="password"
-              placeholder="Create a password"
-              required
-              minLength={6}
-            />
-            <KeyIcon className="pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2 text-[#2A2A2A] peer-focus:text-[#D5FC51]" />
-          </div>
+          <PasswordInput
+            id="password"
+            name="password"
+            label="Password"
+            placeholder="Create a password"
+            required
+            minLength={6}
+            icon={<KeyIcon className="h-[18px] w-[18px]" />}
+          />
         </div>
 
         <div className="mt-4">
-          <label
-            className="mt-5 mb-3 block text-xs font-medium text-[#2A2A2A]"
-            htmlFor="confirmPassword"
-          >
-            Confirm Password
-          </label>
-          <div className="relative">
-            <input
-              className="peer block w-full rounded-md border border-[#D9D9D9] py-[9px] pl-10 text-sm text-[#2A2A2A] placeholder:text-gray-500 focus:border-[#D5FC51] focus:ring-1 focus:ring-[#D5FC51] focus:outline-none"
-              id="confirmPassword"
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm your password"
-              required
-              minLength={6}
-            />
-            <KeyIcon className="pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2 text-[#2A2A2A] peer-focus:text-[#D5FC51]" />
-          </div>
+          <PasswordInput
+            id="confirmPassword"
+            name="confirmPassword"
+            label="Confirm Password"
+            placeholder="Confirm your password"
+            required
+            minLength={6}
+            icon={<KeyIcon className="h-[18px] w-[18px]" />}
+          />
         </div>
       </div>
 

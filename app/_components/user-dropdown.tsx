@@ -3,11 +3,11 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { 
-  UserCircleIcon, 
-  ChevronDownIcon, 
-  Cog6ToothIcon, 
-  PowerIcon 
+import {
+  UserCircleIcon,
+  ChevronDownIcon,
+  Cog6ToothIcon,
+  PowerIcon,
 } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 
@@ -20,7 +20,10 @@ export default function UserDropdown() {
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     }

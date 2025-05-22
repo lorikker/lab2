@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import RegisterForm from "../_components/register-form";
 
 export const metadata: Metadata = {
-  title: "Register - FitnessHub",
-  description: "Create a new account on FitnessHub",
+  title: "Register - SixStarFitness",
+  description: "Create a new account on SixStarFitness",
 };
 
 export default function RegisterPage() {
