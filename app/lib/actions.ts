@@ -122,6 +122,151 @@ export async function deletePost(id: string) {
   redirect("/dashboard/posts");
 }
 
+// User role schema
+const UserRoleSchema = z.object({
+  userId: z.string(),
+  role: z.enum(["USER", "TRAINER", "ADMIN"]),
+});
+
+// User update schema
+const UserUpdateSchema = z.object({
+  userId: z.string(),
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address"),
+});
+
+// User delete schema
+const UserDeleteSchema = z.object({
+  userId: z.string(),
+});
+
+export async function updateUserRole(
+  prevState: UserRoleState,
+  formData: FormData,
+) {
+  const validatedFields = UserRoleSchema.safeParse({
+    userId: formData.get("userId"),
+    role: formData.get("role"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Invalid input. Failed to update user role.",
+    };
+  }
+
+  const { userId, role } = validatedFields.data;
+
+  try {
+    await db.user.update({
+      where: { id: userId },
+      data: { role },
+    });
+  } catch (error) {
+    console.error("Error updating user role:", error);
+    return {
+      message: "Database Error: Failed to update user role.",
+      success: false,
+    };
+  }
+
+  revalidatePath("/dashboard/users");
+  return {
+    message: `User role updated to ${role} successfully.`,
+    success: true,
+  };
+}
+
+export async function updateUserInfo(
+  prevState: UserUpdateState,
+  formData: FormData,
+) {
+  const validatedFields = UserUpdateSchema.safeParse({
+    userId: formData.get("userId"),
+    name: formData.get("name"),
+    email: formData.get("email"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Invalid input. Failed to update user information.",
+      success: false,
+    };
+  }
+
+  const { userId, name, email } = validatedFields.data;
+
+  try {
+    // Check if email is already taken by another user
+    const existingUser = await db.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser && existingUser.id !== userId) {
+      return {
+        message: "Email is already taken by another user.",
+        success: false,
+      };
+    }
+
+    await db.user.update({
+      where: { id: userId },
+      data: { name, email },
+    });
+  } catch (error) {
+    console.error("Error updating user information:", error);
+    return {
+      message: "Database Error: Failed to update user information.",
+      success: false,
+    };
+  }
+
+  revalidatePath("/dashboard/users");
+  return {
+    message: "User information updated successfully.",
+    success: true,
+  };
+}
+
+export async function deleteUser(
+  prevState: UserDeleteState,
+  formData: FormData,
+) {
+  const validatedFields = UserDeleteSchema.safeParse({
+    userId: formData.get("userId"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Invalid input. Failed to delete user.",
+      success: false,
+    };
+  }
+
+  const { userId } = validatedFields.data;
+
+  try {
+    await db.user.delete({
+      where: { id: userId },
+    });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return {
+      message: "Database Error: Failed to delete user.",
+      success: false,
+    };
+  }
+
+  revalidatePath("/dashboard/users");
+  return {
+    message: "User deleted successfully.",
+    success: true,
+  };
+}
+
 // This is temporary
 export type State = {
   errors?: {
@@ -129,4 +274,34 @@ export type State = {
     content?: string[];
   };
   message?: string | null;
+};
+
+// User role state
+export type UserRoleState = {
+  errors?: {
+    userId?: string[];
+    role?: string[];
+  };
+  message?: string | null;
+  success?: boolean;
+};
+
+// User update state
+export type UserUpdateState = {
+  errors?: {
+    userId?: string[];
+    name?: string[];
+    email?: string[];
+  };
+  message?: string | null;
+  success?: boolean;
+};
+
+// User delete state
+export type UserDeleteState = {
+  errors?: {
+    userId?: string[];
+  };
+  message?: string | null;
+  success?: boolean;
 };

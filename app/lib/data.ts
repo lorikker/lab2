@@ -62,3 +62,26 @@ export async function fetchUsersCount() {
     throw new Error("Failed to fetch users count.");
   }
 }
+
+export async function fetchAllUsers() {
+  try {
+    console.log("Fetching all users...");
+
+    const users = await db.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    console.log("Users fetched successfully");
+    return users;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch users.");
+  }
+}
