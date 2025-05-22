@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "./_components/header";
 import Footer from "./_components/footer";
 import SessionProvider from "./_components/session-provider";
+import SuppressHydrationWarning from "./_components/suppress-hydration-warning";
 
 const ubuntu = Ubuntu({
   variable: "--font-ubuntu-sans",
@@ -12,7 +13,7 @@ const ubuntu = Ubuntu({
 });
 
 export const metadata: Metadata = {
-  title: "Fitness App",
+  title: "SixStar Fitness",
   description: "Fitness App.",
 };
 
@@ -24,13 +25,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${ubuntu.variable} antialiased`}>
-        <SessionProvider>
-          <Header />
-          <div className="flex min-h-screen flex-col">
-            <div className="flex-grow">{children}</div>
-            <Footer />
-          </div>
-        </SessionProvider>
+        <SuppressHydrationWarning>
+          <SessionProvider>
+            <Header />
+            <div className="flex min-h-screen flex-col">
+              <div className="flex-grow">{children}</div>
+              <Footer />
+            </div>
+          </SessionProvider>
+        </SuppressHydrationWarning>
       </body>
     </html>
   );
