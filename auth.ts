@@ -18,8 +18,8 @@ declare module "next-auth" {
     id: string;
     user: {
       id: string;
+      role: string;
       // ...other properties
-      // role: UserRole;
     } & DefaultSession["user"];
   }
 
@@ -60,6 +60,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               email: true,
               password: true,
               name: true,
+              role: true,
             },
           });
 
@@ -89,6 +90,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
+  },
+  callbacks: {
+    jwt: async ({ token, user }) => {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+      }
+      return token;
+    },
+    session: async ({ session, token }) => {
+      if (token) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
+      }
+      return session;
+    },
   },
 });
 
