@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 
-export default function SuppressHydrationWarning({ 
-  children 
-}: { 
-  children: React.ReactNode 
+export default function SuppressHydrationWarning({
+  children,
+}: {
+  children: React.ReactNode;
 }) {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -13,12 +13,17 @@ export default function SuppressHydrationWarning({
     setIsMounted(true);
   }, []);
 
-  return (
-    <>
-      {/* Suppress hydration warnings during initial render */}
-      <div suppressHydrationWarning>
-        {isMounted ? children : <div style={{ visibility: "hidden" }}>{children}</div>}
+  if (!isMounted) {
+    return (
+      <div
+        style={{ visibility: "hidden" }}
+        aria-hidden="true"
+        suppressHydrationWarning
+      >
+        {children}
       </div>
-    </>
-  );
+    );
+  }
+
+  return <div suppressHydrationWarning>{children}</div>;
 }

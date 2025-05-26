@@ -28,18 +28,13 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* Try to disable the problematic extension */}
-        <meta httpEquiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http: blob: data:; object-src 'none'; connect-src 'self' https: wss: ws: http: blob:; frame-src 'self' https: http: blob: data:; child-src 'self' https: http: blob: data:;" />
+        <meta
+          httpEquiv="Content-Security-Policy"
+          content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http: blob: data:; object-src 'none'; connect-src 'self' https: wss: ws: http: blob:; frame-src 'self' https: http: blob: data:; child-src 'self' https: http: blob: data:;"
+        />
 
         {/* Load extension blocker script as early as possible */}
-        <script src="/extension-blocker.js" strategy="beforeInteractive" />
-        <ExtensionErrorScript />
-      </head>
-      <head>
-        {/* Try to disable the problematic extension */}
-        <meta httpEquiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http: blob: data:; object-src 'none'; connect-src 'self' https: wss: ws: http: blob:; frame-src 'self' https: http: blob: data:; child-src 'self' https: http: blob: data:;" />
-
-        {/* Load extension blocker script as early as possible */}
-        <script src="/extension-blocker.js" strategy="beforeInteractive" />
+        <script src="/extension-blocker.js" />
         <ExtensionErrorScript />
       </head>
       <body className={`${ubuntu.variable} antialiased`}>

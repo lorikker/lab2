@@ -6,7 +6,6 @@ import {
   HomeIcon,
   ShoppingBagIcon,
   UserGroupIcon,
-  UserIcon,
   ChartBarIcon,
   Squares2X2Icon,
   Bars3Icon,
@@ -19,6 +18,7 @@ import {
   Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 import UserDropdown from "./user-dropdown";
+import CartIcon from "./cart-icon";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
@@ -121,14 +121,6 @@ export default function Header() {
               Book Trainer
             </HeaderLink>
 
-            {/* Show Users link for trainers and admins */}
-            {(userRole === "ADMIN" || userRole === "TRAINER") && (
-              <HeaderLink href="/users">
-                <UserIcon className="mr-1 h-5 w-5" />
-                Users
-              </HeaderLink>
-            )}
-
             {/* Show Trainers link for all users */}
             <HeaderLink href="/trainers">
               <UserGroupIcon className="mr-1 h-5 w-5" />
@@ -152,6 +144,9 @@ export default function Header() {
         </div>
 
         <div className="flex items-center space-x-4">
+          {/* Cart Icon */}
+          <CartIcon />
+
           <UserDropdown />
 
           {/* Mobile menu button */}
@@ -230,17 +225,6 @@ export default function Header() {
               Book Trainer
             </MobileHeaderLink>
 
-            {/* Show Users link for trainers and admins */}
-            {(userRole === "ADMIN" || userRole === "TRAINER") && (
-              <MobileHeaderLink
-                href="/users"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <UserIcon className="mr-2 h-5 w-5" />
-                Users
-              </MobileHeaderLink>
-            )}
-
             {/* Show Trainers link for all users */}
             <MobileHeaderLink
               href="/trainers"
@@ -268,6 +252,15 @@ export default function Header() {
             >
               <ShoppingBagIcon className="mr-2 h-5 w-5" />
               Shop
+            </MobileHeaderLink>
+
+            {/* Cart link for all users */}
+            <MobileHeaderLink
+              href="/shop/cart"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <ShoppingBagIcon className="mr-2 h-5 w-5" />
+              Cart
             </MobileHeaderLink>
 
             {/* My Account link */}

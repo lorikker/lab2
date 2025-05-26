@@ -6,6 +6,7 @@ import {
   UserIcon,
   ChartBarIcon,
   Squares2X2Icon,
+  ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
 
 export const metadata: Metadata = {
@@ -14,8 +15,6 @@ export const metadata: Metadata = {
 
 export default async function DashboardPage() {
   const session = await auth();
-  // Default to USER role since we reverted the auth.ts file
-  const userRole = "USER";
 
   return (
     <main className="p-4 md:p-10">
@@ -67,6 +66,24 @@ export default async function DashboardPage() {
             View analytics and reports for the fitness center.
           </p>
         </Link>
+
+        {/* Shop Management Card - For admins only */}
+        {session?.user?.role === "ADMIN" && (
+          <Link
+            href="/dashboard/shop"
+            className="rounded-md bg-white p-6 shadow transition-all hover:shadow-md"
+          >
+            <div className="flex items-center gap-2">
+              <ShoppingBagIcon className="h-6 w-6 text-[#D5FC51]" />
+              <h2 className="text-xl font-medium text-gray-900">
+                Shop Management
+              </h2>
+            </div>
+            <p className="mt-2 text-sm text-gray-600">
+              Manage products, orders, and shop settings.
+            </p>
+          </Link>
+        )}
 
         {/* Workouts Card - For all users */}
         <Link
