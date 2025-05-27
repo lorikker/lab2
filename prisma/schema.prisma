@@ -8,19 +8,26 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(uuid())
+  id            String          @id @default(uuid())
   name          String?
-  email         String?  @unique
+  email         String?         @unique
   emailVerified DateTime?
   password      String?
   image         String?
-  role          String   @default("USER")
+  role          String          @default("USER")
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
   accounts      Account[]
-  sessions      Session[]
   Authenticator Authenticator[]
+  sessions      Session[]
+  carts         Cart?
+  orders        Order[]
   posts         Post[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  reviews       Review[]
+
+  // New membership relations
+  memberships     Memberships[]     @relation("UserMemberships")
+  paidMemberships PaidMemberships[] @relation("UserPaidMemberships")
 
   @@map("users")
 }
@@ -40,8 +47,7 @@ model Account {
   session_state     String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -51,10 +57,9 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
@@ -75,21 +80,225 @@ model Authenticator {
   credentialDeviceType String
   credentialBackedUp   Boolean
   transports           String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, credentialID])
 }
 
 model Post {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String
-  content   String
-
-  createdBy   User   @relation(fields: [createdById], references: [id])
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  title       String
+  content     String
   createdById String
+  createdBy   User     @relation(fields: [createdById], references: [id])
 
   @@map("posts")
+}
+
+model ProductCategory {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  slug        String    @unique
+  image       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+
+  @@map("product_categories")
+}
+
+model Product {
+  id          String          @id @default(uuid())
+  name        String
+  description String
+  price       Decimal         @db.Decimal(10, 2)
+  salePrice   Decimal?        @db.Decimal(10, 2)
+  inventory   Int             @default(0)
+  images      String[]
+  featured    Boolean         @default(false)
+  slug        String          @unique
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  categoryId  String
+  bundleItems BundleItem[]
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+  category    ProductCategory @relation(fields: [categoryId], references: [id])
+  reviews     Review[]
+
+  @@map("products")
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  productId String
+  userId    String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, userId])
+  @@map("reviews")
+}
+
+model Order {
+  id            String      @id @default(uuid())
+  orderNumber   String      @unique
+  status        String      @default("pending")
+  total         Decimal     @db.Decimal(10, 2)
+  paymentIntent String?
+  paymentStatus String      @default("pending")
+  shippingInfo  Json?
+  billingInfo   Json?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  userId        String
+  orderItems    OrderItem[]
+  user          User        @relation(fields: [userId], references: [id])
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  name      String
+  price     Decimal  @db.Decimal(10, 2)
+  quantity  Int
+  orderId   String
+  productId String?
+  bundleId  String?
+  bundles   Bundle?  @relation(fields: [bundleId], references: [id])
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product? @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String     @unique
+  cartItems CartItem[]
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  quantity  Int      @default(1)
+  cartId    String
+  productId String?
+  bundleId  String?
+  bundles   Bundle?  @relation(fields: [bundleId], references: [id])
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product? @relation(fields: [productId], references: [id])
+
+  @@unique([cartId, productId, bundleId])
+  @@map("cart_items")
+}
+
+model Bundle {
+  id          String       @id @default(uuid())
+  name        String
+  description String
+  price       Decimal      @db.Decimal(10, 2)
+  salePrice   Decimal?     @db.Decimal(10, 2)
+  images      String[]
+  featured    Boolean      @default(false)
+  slug        String       @unique
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  bundleItems BundleItem[]
+  cart_items  CartItem[]
+  order_items OrderItem[]
+
+  @@map("bundles")
+}
+
+model BundleItem {
+  id        String  @id @default(uuid())
+  quantity  Int     @default(1)
+  bundleId  String
+  productId String
+  bundle    Bundle  @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([bundleId, productId])
+  @@map("bundle_items")
+}
+
+model Coupon {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  discount    Decimal  @db.Decimal(10, 2)
+  isPercent   Boolean  @default(true)
+  maxUses     Int?
+  currentUses Int      @default(0)
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("coupons")
+}
+
+// Tabela për membership-et aktive në fitness
+model Memberships {
+  id              String   @id @default(uuid())
+  name            String?  // User's name for easy display
+  userId          String
+  membershipType  String   // "basic", "premium", "elite"
+  status          String   @default("active") // "active", "expired", "cancelled", "suspended"
+  startDate       DateTime @default(now())
+  endDate         DateTime
+  daysActive      Int      @default(0)
+  daysRemaining   Int      @default(0)
+  price           Decimal  @db.Decimal(10, 2)
+  currency        String   @default("USD")
+  paymentMethod   String?  // "stripe", "paypal", etc.
+  autoRenew       Boolean  @default(false)
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation("UserMemberships", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("memberships")
+}
+
+// Tabela për historikun e porosive të paguara për membership
+model PaidMemberships {
+  id                  String   @id @default(uuid())
+  name                String?  // User's name for easy display
+  userId              String
+  orderNumber         String   @unique
+  membershipType      String   // "basic", "premium", "elite"
+  status              String   @default("completed") // "completed", "refunded", "cancelled"
+  amount              Decimal  @db.Decimal(10, 2)
+  currency            String   @default("USD")
+  paymentMethod       String?  // "stripe", "paypal", etc.
+  paymentIntentId     String?  // Stripe payment intent ID
+  stripeSessionId     String?  // Stripe checkout session ID
+  invoiceNumber       String?  @unique
+  billingInfo         Json?    // Store billing address and customer info
+  paymentDate         DateTime @default(now())
+  refundDate          DateTime?
+  refundAmount        Decimal? @db.Decimal(10, 2)
+  membershipStartDate DateTime?
+  membershipEndDate   DateTime?
+  notes               String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user User @relation("UserPaidMemberships", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("paidmemberships")
 }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import {
   CreditCardIcon,
@@ -15,6 +16,7 @@ export default function PaymentPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const plan = searchParams.get("plan") || "basic";
+  const { data: session } = useSession();
 
   const [formData, setFormData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -108,7 +110,7 @@ export default function PaymentPage() {
           console.log('Loaded form data from sessionStorage:', parsedData);
 
           // Create payment intent
-          createPaymentIntent(parsedData, planDetails);
+          createPaymentIntent(parsedData, planDetails, session);
         } catch (error) {
           console.error('Error parsing saved form data:', error);
           // Redirect back to checkout if data is invalid with an error message
@@ -127,9 +129,10 @@ export default function PaymentPage() {
   }, [plan, router]);
 
   // Create payment intent
-  const createPaymentIntent = async (formData: any, planDetails: any) => {
+  const createPaymentIntent = async (formData: any, planDetails: any, currentSession?: any) => {
     try {
       setIsSubmitting(true);
+      console.log('createPaymentIntent called with session:', currentSession);
 
       // Get price from planDetails
       const amount = parseFloat(planDetails.price);
@@ -145,7 +148,9 @@ export default function PaymentPage() {
           currency: 'usd',
           customerName: `${formData.firstName} ${formData.lastName}`,
           customerEmail: formData.email,
-          plan: planDetails.name
+          plan: planDetails.name.toLowerCase(),
+          userId: (currentSession && currentSession.user && currentSession.user.id) ? currentSession.user.id : 'e248a663-e3b6-4f03-bdaa-8cb9759b422b',
+          billingInfo: formData
         }),
       });
 
@@ -182,9 +187,44 @@ export default function PaymentPage() {
   };
 
   // Handle successful payment
-  const handlePaymentSuccess = (paymentIntentId: string) => {
+  const handlePaymentSuccess = async (paymentIntentId: string) => {
     console.log('Payment success callback with ID:', paymentIntentId);
     setIsSubmitting(false);
+
+    // Create membership in database
+    try {
+      console.log('Creating membership in database...');
+      const membershipResponse = await fetch('/api/process-membership', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          paymentIntentId,
+          userId: session?.user?.id || 'e248a663-e3b6-4f03-bdaa-8cb9759b422b',
+          userName: session?.user?.name || 'Guest User',
+          membershipType: planDetails.name.toLowerCase(),
+          amount: parseFloat(planDetails.price),
+          customerEmail: formData?.email || session?.user?.email || 'guest@example.com',
+          billingInfo: formData,
+        }),
+      });
+
+      if (membershipResponse.ok) {
+        const membershipResult = await membershipResponse.json();
+        console.log('Membership processed successfully:', membershipResult);
+
+        // Show success message based on whether it's an extension or new membership
+        if (membershipResult.message) {
+          console.log(membershipResult.message);
+        }
+      } else {
+        console.error('Failed to create membership');
+      }
+    } catch (error) {
+      console.error('Error creating membership:', error);
+    }
+
     setIsSuccess(true);
 
     // Generate a stable invoice number based on date
