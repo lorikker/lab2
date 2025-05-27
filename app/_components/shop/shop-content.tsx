@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { MagnifyingGlassIcon, FunnelIcon } from "@heroicons/react/24/outline";
 import ProductCard from "./product-card";
+import BundleCard from "./bundle-card";
 import ShopPagination from "./shop-pagination";
 
 interface Product {
@@ -21,6 +22,28 @@ interface Product {
   featured: boolean;
   slug: string;
 }
+
+interface Bundle {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  salePrice?: number | null;
+  images: string[];
+  featured: boolean;
+  slug: string;
+  items?: Array<{
+    id: string;
+    quantity: number;
+    product: {
+      id: string;
+      name: string;
+      price: number;
+    };
+  }>;
+}
+
+type ShopItem = (Product & { type: "product" }) | (Bundle & { type: "bundle" });
 
 interface Category {
   id: string;
@@ -59,19 +82,19 @@ export default function ShopContent({ searchParams }: ShopContentProps) {
   const [showFilters, setShowFilters] = useState(false);
 
   // State for data
-  const [products, setProducts] = useState<Product[]>([]);
+  const [items, setItems] = useState<ShopItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [totalProducts, setTotalProducts] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
 
   // Fetch categories on component mount
   useEffect(() => {
     fetchCategories();
   }, []);
 
-  // Fetch products when filters change
+  // Fetch items when filters change
   useEffect(() => {
-    fetchProducts();
+    fetchItems();
   }, [searchTerm, selectedCategory, minPrice, maxPrice, sortBy, currentPage]);
 
   const fetchCategories = async () => {
@@ -96,7 +119,7 @@ export default function ShopContent({ searchParams }: ShopContentProps) {
     }
   };
 
-  const fetchProducts = async () => {
+  const fetchItems = async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -108,16 +131,38 @@ export default function ShopContent({ searchParams }: ShopContentProps) {
       params.append("page", currentPage.toString());
       params.append("limit", PRODUCTS_PER_PAGE.toString());
 
+      // Try the new shop API first
+      try {
+        const response = await fetch(`/api/shop?${params.toString()}`);
+        if (response.ok) {
+          const data = await response.json();
+          setItems(data.items || []);
+          setTotalItems(data.total || 0);
+          return;
+        }
+      } catch (shopApiError) {
+        console.log(
+          "Shop API failed, falling back to products API:",
+          shopApiError,
+        );
+      }
+
+      // Fallback to products API
       const response = await fetch(`/api/products?${params.toString()}`);
       if (response.ok) {
         const data = await response.json();
-        setProducts(data.products || []);
-        setTotalProducts(data.total || 0);
+        // Convert products to items format
+        const productsAsItems = (data.products || []).map((product: any) => ({
+          ...product,
+          type: "product" as const,
+        }));
+        setItems(productsAsItems);
+        setTotalItems(data.total || 0);
       }
     } catch (error) {
-      console.error("Error fetching products:", error);
-      setProducts([]);
-      setTotalProducts(0);
+      console.error("Error fetching shop items:", error);
+      setItems([]);
+      setTotalItems(0);
     } finally {
       setLoading(false);
     }
@@ -157,7 +202,7 @@ export default function ShopContent({ searchParams }: ShopContentProps) {
     window.history.pushState({}, "", "/shop");
   };
 
-  const totalPages = Math.ceil(totalProducts / PRODUCTS_PER_PAGE);
+  const totalPages = Math.ceil(totalItems / PRODUCTS_PER_PAGE);
 
   return (
     <section id="products" className="bg-gray-50 py-12">
@@ -289,7 +334,7 @@ export default function ShopContent({ searchParams }: ShopContentProps) {
         {/* Minimal Results Info */}
         <div className="mb-8 flex items-center justify-between border-b border-gray-200 pb-4">
           <p className="text-sm text-gray-500">
-            {totalProducts} {totalProducts === 1 ? "product" : "products"}
+            {totalItems} {totalItems === 1 ? "item" : "items"}
             {searchTerm && ` for "${searchTerm}"`}
           </p>
           {(searchTerm || selectedCategory || minPrice || maxPrice) && (
@@ -302,17 +347,21 @@ export default function ShopContent({ searchParams }: ShopContentProps) {
           )}
         </div>
 
-        {/* Products Grid */}
+        {/* Shop Items Grid */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900"></div>
           </div>
-        ) : products.length > 0 ? (
+        ) : items.length > 0 ? (
           <>
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+              {items.map((item) =>
+                item.type === "product" ? (
+                  <ProductCard key={item.id} product={item} />
+                ) : (
+                  <BundleCard key={item.id} bundle={item} />
+                ),
+              )}
             </div>
 
             {/* Pagination */}
@@ -332,7 +381,7 @@ export default function ShopContent({ searchParams }: ShopContentProps) {
         ) : (
           <div className="py-20 text-center">
             <div className="mx-auto max-w-md">
-              <p className="mb-4 text-gray-500">No products found</p>
+              <p className="mb-4 text-gray-500">No items found</p>
               {(searchTerm || selectedCategory || minPrice || maxPrice) && (
                 <button
                   onClick={clearFilters}

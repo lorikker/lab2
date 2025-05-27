@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { db } from "@/db";
+import { getOrCreateDefaultCategory } from "./ensure-default-category";
 
 // Create a new category
 export async function createCategory(formData: FormData) {
@@ -110,25 +111,17 @@ export async function deleteCategory(formData: FormData) {
     throw new Error("Category not found");
   }
 
+  // Prevent deletion of the "Uncategorized" category
+  if (category.slug === "uncategorized") {
+    throw new Error(
+      "Cannot delete the 'Uncategorized' category. This is a system category used to hold products when other categories are deleted.",
+    );
+  }
+
   // If the category has products, update them to use a default category
   if (category._count.products > 0) {
-    // Find or create a default "Uncategorized" category
-    let defaultCategory = await db.productCategory.findFirst({
-      where: {
-        slug: "uncategorized",
-      },
-    });
-
-    if (!defaultCategory) {
-      defaultCategory = await db.productCategory.create({
-        data: {
-          name: "Uncategorized",
-          slug: "uncategorized",
-          description:
-            "Default category for products without a specific category",
-        },
-      });
-    }
+    // Get or create the default "Uncategorized" category
+    const defaultCategory = await getOrCreateDefaultCategory();
 
     // Update all products in this category to use the default category
     await db.product.updateMany({

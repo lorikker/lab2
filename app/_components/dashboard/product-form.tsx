@@ -27,6 +27,27 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageUrls, setImageUrls] = useState<string[]>(product?.images || [""]);
+  const [slug, setSlug] = useState(product?.slug || "");
+
+  // Function to generate slug from product name
+  const generateSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "") // Remove special characters
+      .replace(/[\s_-]+/g, "-") // Replace spaces and underscores with hyphens
+      .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
+  };
+
+  // Handle product name change to auto-generate slug
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const name = e.target.value;
+    if (!product) {
+      // Only auto-generate for new products
+      const newSlug = generateSlug(name);
+      setSlug(newSlug);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -109,6 +130,7 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
             name="name"
             required
             defaultValue={product?.name || ""}
+            onChange={handleNameChange}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-[#D5FC51] focus:ring-[#D5FC51] focus:outline-none sm:text-sm"
           />
         </div>
@@ -125,12 +147,23 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
             id="slug"
             name="slug"
             required
-            defaultValue={product?.slug || ""}
+            value={slug}
+            onChange={(e) => setSlug(e.target.value)}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-[#D5FC51] focus:ring-[#D5FC51] focus:outline-none sm:text-sm"
           />
           <p className="mt-1 text-xs text-gray-500">
-            URL-friendly name (e.g., "protein-powder")
+            URL-friendly name (e.g., "protein-powder").{" "}
+            {!product && (
+              <span className="font-medium text-green-600">
+                Auto-generated from product name.
+              </span>
+            )}
           </p>
+          {slug && (
+            <p className="mt-1 text-xs text-blue-600">
+              Product URL will be: /shop/product/{slug}
+            </p>
+          )}
         </div>
 
         <div className="md:col-span-2">

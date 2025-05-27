@@ -123,8 +123,15 @@ export default async function CategoriesManagementPage() {
                           )}
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
-                            {category.name}
+                          <div className="flex items-center gap-2">
+                            <div className="text-sm font-medium text-gray-900">
+                              {category.name}
+                            </div>
+                            {category.slug === "uncategorized" && (
+                              <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
+                                System Category
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>

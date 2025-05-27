@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { db } from "@/db";
 
 export async function GET() {
   try {
@@ -17,8 +15,23 @@ export async function GET() {
       });
     }
 
+    // Verify the user exists in the database
+    const user = await db.user.findUnique({
+      where: { id: session.user.id },
+    });
+
+    if (!user) {
+      console.error("User not found in database:", session.user.id);
+      // Return empty cart for invalid user
+      return NextResponse.json({
+        id: "guest-cart",
+        items: [],
+        total: 0,
+      });
+    }
+
     // For logged-in users, fetch from database
-    let cart = await prisma.cart.findUnique({
+    let cart = await db.cart.findUnique({
       where: {
         userId: session.user.id,
       },
@@ -46,31 +59,41 @@ export async function GET() {
 
     // Create cart if it doesn't exist
     if (!cart) {
-      cart = await prisma.cart.create({
-        data: {
-          userId: session.user.id,
-        },
-        include: {
-          items: {
-            include: {
-              product: {
-                include: {
-                  category: true,
+      try {
+        cart = await db.cart.create({
+          data: {
+            userId: user.id, // Use the verified user ID
+          },
+          include: {
+            items: {
+              include: {
+                product: {
+                  include: {
+                    category: true,
+                  },
                 },
-              },
-              bundle: {
-                include: {
-                  items: {
-                    include: {
-                      product: true,
+                bundle: {
+                  include: {
+                    items: {
+                      include: {
+                        product: true,
+                      },
                     },
                   },
                 },
               },
             },
           },
-        },
-      });
+        });
+      } catch (createError) {
+        console.error("Error creating cart:", createError);
+        // Return empty cart if creation fails
+        return NextResponse.json({
+          id: "guest-cart",
+          items: [],
+          total: 0,
+        });
+      }
     }
 
     // Calculate total
@@ -94,7 +117,7 @@ export async function GET() {
     console.error("Database Error:", error);
     return NextResponse.json(
       { error: "Failed to fetch user cart" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

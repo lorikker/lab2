@@ -7,7 +7,6 @@ import { z } from "zod";
 import { db } from "@/db";
 
 // Use the singleton Prisma client
-const prisma = db;
 
 // Add to cart schema
 const AddToCartSchema = z.object({
@@ -60,23 +59,43 @@ export async function addToCart(prevState: AddToCartState, formData: FormData) {
   try {
     // Only save to database if user is logged in
     if (session?.user?.id) {
+      // Verify the user exists in the database
+      const user = await db.user.findUnique({
+        where: { id: session.user.id },
+      });
+
+      if (!user) {
+        return {
+          message: "User not found in database.",
+          success: false,
+        };
+      }
+
       // Get or create user cart
-      let cart = await prisma.cart.findUnique({
+      let cart = await db.cart.findUnique({
         where: {
-          userId: session.user.id,
+          userId: user.id,
         },
       });
 
       if (!cart) {
-        cart = await prisma.cart.create({
-          data: {
-            userId: session.user.id,
-          },
-        });
+        try {
+          cart = await db.cart.create({
+            data: {
+              userId: user.id,
+            },
+          });
+        } catch (error) {
+          console.error("Error creating cart:", error);
+          return {
+            message: "Failed to create cart.",
+            success: false,
+          };
+        }
       }
 
       // Check if item already exists in cart
-      const existingItem = await prisma.cartItem.findFirst({
+      const existingItem = await db.cartItem.findFirst({
         where: {
           cartId: cart.id,
           productId: productId || null,
@@ -86,7 +105,7 @@ export async function addToCart(prevState: AddToCartState, formData: FormData) {
 
       if (existingItem) {
         // Update quantity
-        await prisma.cartItem.update({
+        await db.cartItem.update({
           where: {
             id: existingItem.id,
           },
@@ -96,7 +115,7 @@ export async function addToCart(prevState: AddToCartState, formData: FormData) {
         });
       } else {
         // Add new item
-        await prisma.cartItem.create({
+        await db.cartItem.create({
           data: {
             cartId: cart.id,
             productId: productId || null,
@@ -173,8 +192,20 @@ export async function updateCartItem(
   try {
     // Only update in database if user is logged in
     if (session?.user?.id) {
+      // Verify the user exists in the database
+      const user = await db.user.findUnique({
+        where: { id: session.user.id },
+      });
+
+      if (!user) {
+        return {
+          message: "User not found in database.",
+          success: false,
+        };
+      }
+
       // Verify the cart item belongs to the user
-      const cartItem = await prisma.cartItem.findUnique({
+      const cartItem = await db.cartItem.findUnique({
         where: {
           id: cartItemId,
         },
@@ -183,7 +214,7 @@ export async function updateCartItem(
         },
       });
 
-      if (!cartItem || cartItem.cart.userId !== session.user.id) {
+      if (!cartItem || cartItem.cart.userId !== user.id) {
         return {
           message: "Cart item not found or does not belong to you.",
           success: false,
@@ -191,7 +222,7 @@ export async function updateCartItem(
       }
 
       // Update quantity
-      await prisma.cartItem.update({
+      await db.cartItem.update({
         where: {
           id: cartItemId,
         },
@@ -263,8 +294,20 @@ export async function removeCartItem(
   try {
     // Only remove from database if user is logged in
     if (session?.user?.id) {
+      // Verify the user exists in the database
+      const user = await db.user.findUnique({
+        where: { id: session.user.id },
+      });
+
+      if (!user) {
+        return {
+          message: "User not found in database.",
+          success: false,
+        };
+      }
+
       // Verify the cart item belongs to the user
-      const cartItem = await prisma.cartItem.findUnique({
+      const cartItem = await db.cartItem.findUnique({
         where: {
           id: cartItemId,
         },
@@ -273,7 +316,7 @@ export async function removeCartItem(
         },
       });
 
-      if (!cartItem || cartItem.cart.userId !== session.user.id) {
+      if (!cartItem || cartItem.cart.userId !== user.id) {
         return {
           message: "Cart item not found or does not belong to you.",
           success: false,
@@ -281,7 +324,7 @@ export async function removeCartItem(
       }
 
       // Remove item
-      await prisma.cartItem.delete({
+      await db.cartItem.delete({
         where: {
           id: cartItemId,
         },
@@ -399,9 +442,21 @@ export async function createOrder(
       country,
     };
 
+    // Verify the user exists in the database
+    const user = await db.user.findUnique({
+      where: { id: session.user.id },
+    });
+
+    if (!user) {
+      return {
+        message: "User not found in database.",
+        success: false,
+      };
+    }
+
     // Get the user's cart
-    const cart = await prisma.cart.findUnique({
-      where: { userId: session.user.id },
+    const cart = await db.cart.findUnique({
+      where: { userId: user.id },
       include: {
         items: {
           include: {
@@ -464,7 +519,7 @@ export async function createOrder(
       total,
       orderItems,
     });
-    const order = await prisma.order.create({
+    const order = await db.order.create({
       data: {
         orderNumber,
         status: "pending",
@@ -472,7 +527,7 @@ export async function createOrder(
         paymentStatus: "paid", // Assume payment is successful for this demo
         shippingInfo,
         billingInfo: shippingInfo, // Same as shipping for this demo
-        userId: session.user.id,
+        userId: user.id,
         items: {
           create: orderItems,
         },
@@ -499,7 +554,7 @@ export async function createOrder(
     }
 
     // Clear the cart after successful order
-    await prisma.cartItem.deleteMany({
+    await db.cartItem.deleteMany({
       where: { cartId: cart.id },
     });
 

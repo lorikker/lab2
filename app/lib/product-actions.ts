@@ -5,6 +5,16 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { db } from "@/db";
 
+// Function to generate slug from name
+function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "") // Remove special characters
+    .replace(/[\s_-]+/g, "-") // Replace spaces and underscores with hyphens
+    .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
+}
+
 // Create a new product
 export async function createProduct(formData: FormData) {
   const session = await auth();
@@ -22,15 +32,36 @@ export async function createProduct(formData: FormData) {
   const salePrice = salePriceStr ? parseFloat(salePriceStr) : null;
   const inventory = parseInt(formData.get("inventory") as string);
   const categoryId = formData.get("categoryId") as string;
-  const slug = formData.get("slug") as string;
+  let slug = formData.get("slug") as string;
   const featured = formData.has("featured");
 
   // Get image URLs
   const images = formData.getAll("images") as string[];
 
   // Validate required fields
-  if (!name || !description || isNaN(price) || !categoryId || !slug) {
+  if (!name || !description || isNaN(price) || !categoryId) {
     throw new Error("Missing required fields");
+  }
+
+  // Generate slug if not provided or invalid
+  if (!slug || slug.trim() === "" || slug.includes(" ")) {
+    slug = generateSlug(name);
+  }
+
+  // Ensure slug is unique
+  let finalSlug = slug;
+  let counter = 1;
+  while (true) {
+    const existingProduct = await db.product.findUnique({
+      where: { slug: finalSlug },
+    });
+
+    if (!existingProduct) {
+      break;
+    }
+
+    finalSlug = `${slug}-${counter}`;
+    counter++;
   }
 
   // Create the product
@@ -42,7 +73,7 @@ export async function createProduct(formData: FormData) {
       salePrice,
       inventory,
       categoryId,
-      slug,
+      slug: finalSlug,
       featured,
       images,
     },
@@ -71,15 +102,36 @@ export async function updateProduct(formData: FormData) {
   const salePrice = salePriceStr ? parseFloat(salePriceStr) : null;
   const inventory = parseInt(formData.get("inventory") as string);
   const categoryId = formData.get("categoryId") as string;
-  const slug = formData.get("slug") as string;
+  let slug = formData.get("slug") as string;
   const featured = formData.has("featured");
 
   // Get image URLs
   const images = formData.getAll("images") as string[];
 
   // Validate required fields
-  if (!id || !name || !description || isNaN(price) || !categoryId || !slug) {
+  if (!id || !name || !description || isNaN(price) || !categoryId) {
     throw new Error("Missing required fields");
+  }
+
+  // Generate slug if not provided or invalid
+  if (!slug || slug.trim() === "" || slug.includes(" ")) {
+    slug = generateSlug(name);
+  }
+
+  // Ensure slug is unique (excluding current product)
+  let finalSlug = slug;
+  let counter = 1;
+  while (true) {
+    const existingProduct = await db.product.findUnique({
+      where: { slug: finalSlug },
+    });
+
+    if (!existingProduct || existingProduct.id === id) {
+      break;
+    }
+
+    finalSlug = `${slug}-${counter}`;
+    counter++;
   }
 
   // Update the product
@@ -92,7 +144,7 @@ export async function updateProduct(formData: FormData) {
       salePrice,
       inventory,
       categoryId,
-      slug,
+      slug: finalSlug,
       featured,
       images,
     },
@@ -100,7 +152,7 @@ export async function updateProduct(formData: FormData) {
 
   // Revalidate the products page
   revalidatePath("/dashboard/shop/products");
-  revalidatePath(`/shop/product/${slug}`);
+  revalidatePath(`/shop/product/${finalSlug}`);
   revalidatePath("/shop");
 }
 
