@@ -28,6 +28,7 @@ model User {
   // New membership relations
   memberships     Memberships[]     @relation("UserMemberships")
   paidMemberships PaidMemberships[] @relation("UserPaidMemberships")
+  trainer         Trainers?         @relation("UserTrainer")
 
   @@map("users")
 }
@@ -301,4 +302,125 @@ model PaidMemberships {
   user User @relation("UserPaidMemberships", fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("paidmemberships")
+}
+
+// Tabela për booking-et e trajnerëve
+model TrainerBookings {
+  id              String   @id @default(uuid())
+  userId          String
+  trainerId       Int
+  trainerName     String
+  sessionType     String   // "single", "package"
+  bookingDate     String
+  bookingTime     String
+  amount          Decimal  @db.Decimal(10, 2)
+  currency        String   @default("USD")
+  status          String   @default("confirmed") // "confirmed", "completed", "cancelled"
+  paymentIntentId String?  // Stripe payment intent ID
+  invoiceNumber   String?  @unique
+  orderNumber     String?  @unique
+  customerEmail   String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("trainer_bookings")
+}
+
+// Tabela për aplikacionet e trajnerëve (pending approval)
+model TrainerApplications {
+  id              String   @id @default(uuid())
+  userId          String   // User që aplikon për të qenë trajner
+  name            String
+  email           String
+  phone           String?
+  category        String   // "diet", "online", "physical", "programs"
+  specialty       String   // "Weight Loss Nutrition", "Sports Nutrition", etc.
+  experience      String   // "5 years", "7 years", etc.
+  price           String   // "$80/session", "$90/session", etc.
+  description     String
+  qualifications  String?  // Kualifikimet e trajnerit
+  availability    String?  // Oraret e disponueshmërisë
+  photoUrl        String?  // URL e fotos
+  status          String   @default("pending") // "pending", "approved", "rejected"
+  adminNotes      String?  // Shënime nga admini
+  appliedAt       DateTime @default(now())
+  reviewedAt      DateTime?
+  reviewedBy      String?  // Admin që e ka rishikuar
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("trainer_applications")
+}
+
+// Tabela për trajnerët e aprovuar (që shfaqen në faqe)
+model ApprovedTrainers {
+  id              Int      @id @default(autoincrement())
+  userId          String   // User që është bërë trajner
+  applicationId   String   // Reference to original application
+  name            String
+  email           String
+  phone           String?
+  category        String   // "diet", "online", "physical", "programs"
+  specialty       String
+  experience      String
+  rating          Float    @default(5.0)
+  price           String
+  description     String
+  qualifications  String?
+  availability    String?
+  photoUrl        String?
+  isActive        Boolean  @default(true)
+  approvedAt      DateTime @default(now())
+  approvedBy      String   // Admin që e ka aprovuar
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("approved_trainers")
+}
+
+// Tabela për trajnerët aktivë (user-ët që janë bërë trajnerë)
+model Trainers {
+  id              String   @id @default(uuid())
+  userId          String   @unique // User që është bërë trajner
+  applicationId   String   // Reference to original application
+  name            String
+  email           String   @unique
+  phone           String?
+  category        String   // "diet", "online", "physical", "programs"
+  specialty       String
+  experience      String
+  rating          Float    @default(5.0)
+  totalSessions   Int      @default(0)
+  price           String
+  description     String
+  qualifications  String?
+  availability    String?
+  photoUrl        String?
+  isActive        Boolean  @default(true)
+  approvedAt      DateTime @default(now())
+  approvedBy      String   // Admin që e ka aprovuar
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relation to user
+  user            User     @relation("UserTrainer", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("trainers")
+}
+
+// Tabela për notifikimet
+model Notifications {
+  id          String   @id @default(uuid())
+  userId      String   // User që merr notifikimin
+  type        String   // "trainer_application", "trainer_approved", "trainer_rejected", "trainer_removed", "booking_confirmed", etc.
+  title       String   // Titulli i notifikimit
+  message     String   // Mesazhi i notifikimit
+  data        Json?    // Data shtesë (JSON format)
+  isRead      Boolean  @default(false)
+  isAdmin     Boolean  @default(false) // Nëse është notifikim për admin
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("notifications")
 }

@@ -42,30 +42,30 @@ export default function UserDeleteForm({ user, onClose }: { user: User; onClose:
   return (
     <form action={dispatch} className="space-y-4">
       <input type="hidden" name="userId" value={user.id} />
-      
+
       <div className="text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-          <XMarkIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-500/20">
+          <XMarkIcon className="h-6 w-6 text-red-400" aria-hidden="true" />
         </div>
-        <h3 className="mt-3 text-lg font-medium text-gray-900">Delete User</h3>
-        <p className="mt-2 text-sm text-gray-500">
+        <h3 className="mt-3 text-lg font-medium text-white">Delete User</h3>
+        <p className="mt-2 text-sm text-gray-300">
           Are you sure you want to delete {user.name || user.email}? This action cannot be undone.
         </p>
       </div>
-      
+
       <div className="flex items-center justify-between pt-2">
         <button
           type="button"
           onClick={onClose}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+          className="rounded-md border border-gray-600 bg-gray-700 px-3 py-1.5 text-sm font-medium text-gray-300 transition-colors hover:bg-gray-600 hover:text-white"
         >
           Cancel
         </button>
         <DeleteButton />
       </div>
-      
+
       {state.message && (
-        <div className={`flex items-center text-sm ${state.success ? 'text-green-600' : 'text-red-600'}`}>
+        <div className={`flex items-center text-sm ${state.success ? 'text-green-400' : 'text-red-400'}`}>
           {state.success ? (
             <CheckIcon className="mr-1 h-4 w-4" />
           ) : (

@@ -1,11 +1,14 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import { db } from "@/db";
 import {
   UserGroupIcon,
   UserIcon,
   ChartBarIcon,
   Squares2X2Icon,
+  ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
 
 export const metadata: Metadata = {
@@ -14,8 +17,22 @@ export const metadata: Metadata = {
 
 export default async function DashboardPage() {
   const session = await auth();
-  // Default to USER role since we reverted the auth.ts file
-  const userRole = "USER";
+
+  // Redirect if not logged in
+  if (!session?.user?.email) {
+    redirect("/auth/signin");
+  }
+
+  // Check if user is admin
+  const user = await db.user.findUnique({
+    where: { email: session.user.email },
+    select: { role: true, name: true, email: true }
+  });
+
+  // Redirect users who are not admin or trainer to home page
+  if (!user || (user.role !== 'ADMIN' && user.role !== 'TRAINER')) {
+    redirect("/");
+  }
 
   return (
     <main className="p-4 md:p-10">

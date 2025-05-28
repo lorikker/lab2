@@ -182,7 +182,7 @@ function BMICalculator() {
 
 export default function Home() {
   return (
-    <main className="flex flex-col">
+    <main className="flex flex-col mt-0">
       {/* Hero Section */}
       <section className="relative flex min-h-screen items-center justify-center bg-[#2A2A2A] text-white">
         <div

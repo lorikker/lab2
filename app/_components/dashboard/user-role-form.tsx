@@ -46,29 +46,29 @@ export default function UserRoleForm({ user }: { user: User }) {
   return (
     <form action={dispatch} className="flex items-center space-x-2">
       <input type="hidden" name="userId" value={user.id} />
-      
+
       <select
         name="role"
         value={selectedRole}
         onChange={(e) => setSelectedRole(e.target.value)}
-        className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 shadow-sm focus:border-[#D5FC51] focus:outline-none focus:ring-1 focus:ring-[#D5FC51]"
+        className="rounded-md border border-gray-600 bg-gray-700 px-3 py-1.5 text-sm text-white shadow-sm focus:border-[#D5FC51] focus:outline-none focus:ring-1 focus:ring-[#D5FC51]"
       >
         <option value="USER">User</option>
         <option value="TRAINER">Trainer</option>
         <option value="ADMIN">Admin</option>
       </select>
-      
+
       <SubmitButton />
-      
+
       {showSuccess && (
-        <span className="flex items-center text-sm text-green-600">
+        <span className="flex items-center text-sm text-green-400">
           <CheckIcon className="mr-1 h-4 w-4" />
           Updated
         </span>
       )}
-      
+
       {state.message && !state.success && (
-        <span className="flex items-center text-sm text-red-600">
+        <span className="flex items-center text-sm text-red-400">
           <XMarkIcon className="mr-1 h-4 w-4" />
           {state.message}
         </span>

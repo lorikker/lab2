@@ -42,7 +42,15 @@ export default function UserDropdown() {
 
   if (status === "loading") {
     return (
-      <div className="h-10 w-10 animate-pulse rounded-full bg-[#D9D9D9]"></div>
+      <div className="flex items-center space-x-2 rounded-full border border-[#D9D9D9] bg-[#2A2A2A] p-2 text-white">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#D5FC51]">
+          <UserCircleIcon className="h-6 w-6 text-[#2A2A2A]" />
+        </div>
+        <span className="hidden w-16 text-sm font-medium md:block">
+          Loading...
+        </span>
+        <ChevronDownIcon className="h-4 w-4" />
+      </div>
     );
   }
 
@@ -70,7 +78,7 @@ export default function UserDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 rounded-full border border-[#D9D9D9] bg-[#2A2A2A] p-2 text-white transition-colors duration-200 hover:border-[#D5FC51]"
+        className="flex items-center space-x-2 rounded-full border border-[#D9D9D9] bg-[#2A2A2A] p-2 text-white hover:border-[#D5FC51]"
       >
         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#D5FC51]">
           <UserCircleIcon className="h-6 w-6 text-[#2A2A2A]" />

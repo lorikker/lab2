@@ -46,27 +46,27 @@ export default function Modal({
 
   return (
     <div
-      className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4"
+      className="bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center bg-black p-4"
       onClick={handleBackdropClick}
     >
       <div
         ref={modalRef}
-        className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
+        className="relative w-full max-w-md rounded-xl bg-gray-800 border border-gray-700 p-6 shadow-2xl backdrop-blur-sm"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="absolute top-0 right-0 pt-4 pr-4">
           <button
             type="button"
-            className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-[#D5FC51] focus:outline-none"
+            className="rounded-md bg-gray-700 text-gray-400 hover:text-white hover:bg-gray-600 focus:ring-2 focus:ring-[#D5FC51] focus:outline-none p-1 transition-colors"
             onClick={onClose}
           >
             <span className="sr-only">Close</span>
-            <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+            <XMarkIcon className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
 
         <div>
-          <h3 className="mb-4 text-lg leading-6 font-medium text-gray-900">
+          <h3 className="mb-4 text-lg leading-6 font-medium text-white">
             {title}
           </h3>
           <div className="mt-2">{children}</div>

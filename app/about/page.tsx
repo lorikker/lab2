@@ -1,12 +1,10 @@
-import Image from 'next/image';
 import Link from 'next/link';
-import { 
-  UserGroupIcon, 
-  TrophyIcon, 
-  HeartIcon, 
+import {
+  UserGroupIcon,
+  TrophyIcon,
+  HeartIcon,
   SparklesIcon,
-  CheckCircleIcon,
-  ArrowRightIcon
+  CheckCircleIcon
 } from '@heroicons/react/24/outline';
 
 export const metadata = {
@@ -19,13 +17,13 @@ export default function AboutPage() {
     <div className="bg-white">
       <div className="relative overflow-hidden bg-[#2A2A2A]">
         <div className="absolute inset-0">
-          <Image
-            src="/images/about-hero.jpg"
-            alt="Fitness gym interior"
-            fill
-            className="object-cover object-center opacity-30"
-            priority
-          />
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
+            style={{
+              backgroundImage:
+                "url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')",
+            }}
+          ></div>
           <div className="absolute inset-0 bg-gradient-to-b from-[#2A2A2A]/80 to-[#2A2A2A]/95" />
         </div>
         <div className="relative pt-32 pb-16 sm:pb-24 sm:pt-40">
@@ -35,7 +33,7 @@ export default function AboutPage() {
                 About <span className="text-[#D5FC51]">SixStar Fitness</span>
               </h1>
               <p className="mt-6 text-lg leading-8 text-gray-300">
-                Transforming lives through fitness excellence since 2015. 
+                Transforming lives through fitness excellence since 2015.
                 We're more than just a gym - we're a community dedicated to helping you achieve your fitness goals.
               </p>
             </div>
@@ -61,13 +59,13 @@ export default function AboutPage() {
                 </p>
               </div>
               <div className="relative overflow-hidden rounded-lg">
-                <Image
-                  src="/images/about-story.jpg"
-                  alt="Our gym's journey"
-                  width={600}
-                  height={400}
-                  className="h-full w-full object-cover"
-                />
+                <div
+                  className="h-96 w-full bg-cover bg-center bg-no-repeat"
+                  style={{
+                    backgroundImage:
+                      "url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80')",
+                  }}
+                ></div>
               </div>
             </div>
           </div>

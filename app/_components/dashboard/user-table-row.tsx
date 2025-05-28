@@ -13,34 +13,34 @@ export default function UserTableRow({ user }: { user: any }) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   return (
-    <tr className="hover:bg-gray-50">
-      <td className="whitespace-nowrap px-3 py-4 text-sm">
+    <tr className="hover:bg-gray-700/30 transition-colors">
+      <td className="whitespace-nowrap px-6 py-4 text-sm text-white font-medium">
         {user.name || "N/A"}
       </td>
-      <td className="whitespace-nowrap px-3 py-4 text-sm">
+      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-300">
         {user.email || "N/A"}
       </td>
-      <td className="whitespace-nowrap px-3 py-4 text-sm">
+      <td className="whitespace-nowrap px-6 py-4 text-sm">
         <RoleBadge role={user.role || "USER"} />
       </td>
-      <td className="whitespace-nowrap px-3 py-4 text-sm">
+      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-300">
         {formatDate(user.createdAt)}
       </td>
-      <td className="whitespace-nowrap px-3 py-4 text-sm">
+      <td className="whitespace-nowrap px-6 py-4 text-sm">
         <UserRoleForm user={user} />
       </td>
-      <td className="whitespace-nowrap px-3 py-4 text-sm">
+      <td className="whitespace-nowrap px-6 py-4 text-sm">
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setIsEditModalOpen(true)}
-            className="rounded-md bg-blue-50 p-1 text-blue-700 hover:bg-blue-100"
+            className="rounded-md bg-blue-500/20 p-2 text-blue-400 hover:bg-blue-500/30 transition-colors"
             title="Edit user"
           >
             <PencilIcon className="h-4 w-4" />
           </button>
           <button
             onClick={() => setIsDeleteModalOpen(true)}
-            className="rounded-md bg-red-50 p-1 text-red-700 hover:bg-red-100"
+            className="rounded-md bg-red-500/20 p-2 text-red-400 hover:bg-red-500/30 transition-colors"
             title="Delete user"
           >
             <TrashIcon className="h-4 w-4" />
@@ -70,19 +70,19 @@ export default function UserTableRow({ user }: { user: any }) {
 }
 
 function RoleBadge({ role }: { role: string }) {
-  let badgeClasses = "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium";
-  
+  let badgeClasses = "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium";
+
   switch (role) {
     case "ADMIN":
-      badgeClasses += " bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20";
+      badgeClasses += " bg-red-500/20 text-red-400 border border-red-500/30";
       break;
     case "TRAINER":
-      badgeClasses += " bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-600/20";
+      badgeClasses += " bg-green-500/20 text-green-400 border border-green-500/30";
       break;
     default: // USER
-      badgeClasses += " bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20";
+      badgeClasses += " bg-blue-500/20 text-blue-400 border border-blue-500/30";
       break;
   }
-  
+
   return <span className={badgeClasses}>{role}</span>;
 }

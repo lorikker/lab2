@@ -18,7 +18,7 @@
 
 @layer base {
   body {
-    @apply bg-white pt-16 text-[#2A2A2A];
+    @apply bg-white text-[#2A2A2A];
     font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   }
 
@@ -66,4 +66,48 @@
   .section {
     @apply py-16 md:py-24;
   }
+}
+
+/* Custom animations for trainers page */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(213, 252, 81, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(213, 252, 81, 0.6);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
 }

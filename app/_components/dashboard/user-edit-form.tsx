@@ -45,9 +45,9 @@ export default function UserEditForm({ user, onClose }: { user: User; onClose: (
   return (
     <form action={dispatch} className="space-y-4">
       <input type="hidden" name="userId" value={user.id} />
-      
+
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="name" className="block text-sm font-medium text-gray-300">
           Name
         </label>
         <input
@@ -56,16 +56,16 @@ export default function UserEditForm({ user, onClose }: { user: User; onClose: (
           name="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 shadow-sm focus:border-[#D5FC51] focus:outline-none focus:ring-1 focus:ring-[#D5FC51]"
+          className="mt-1 block w-full rounded-md border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white shadow-sm focus:border-[#D5FC51] focus:outline-none focus:ring-1 focus:ring-[#D5FC51]"
           required
         />
         {state.errors?.name && (
-          <p className="mt-1 text-sm text-red-600">{state.errors.name[0]}</p>
+          <p className="mt-1 text-sm text-red-400">{state.errors.name[0]}</p>
         )}
       </div>
-      
+
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="email" className="block text-sm font-medium text-gray-300">
           Email
         </label>
         <input
@@ -74,27 +74,27 @@ export default function UserEditForm({ user, onClose }: { user: User; onClose: (
           name="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 shadow-sm focus:border-[#D5FC51] focus:outline-none focus:ring-1 focus:ring-[#D5FC51]"
+          className="mt-1 block w-full rounded-md border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white shadow-sm focus:border-[#D5FC51] focus:outline-none focus:ring-1 focus:ring-[#D5FC51]"
           required
         />
         {state.errors?.email && (
-          <p className="mt-1 text-sm text-red-600">{state.errors.email[0]}</p>
+          <p className="mt-1 text-sm text-red-400">{state.errors.email[0]}</p>
         )}
       </div>
-      
+
       <div className="flex items-center justify-between pt-2">
         <button
           type="button"
           onClick={onClose}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+          className="rounded-md border border-gray-600 bg-gray-700 px-3 py-1.5 text-sm font-medium text-gray-300 transition-colors hover:bg-gray-600 hover:text-white"
         >
           Cancel
         </button>
         <SubmitButton />
       </div>
-      
+
       {state.message && (
-        <div className={`flex items-center text-sm ${state.success ? 'text-green-600' : 'text-red-600'}`}>
+        <div className={`flex items-center text-sm ${state.success ? 'text-green-400' : 'text-red-400'}`}>
           {state.success ? (
             <CheckIcon className="mr-1 h-4 w-4" />
           ) : (
