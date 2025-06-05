@@ -3,7 +3,8 @@
 import { useState, useEffect, useActionState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { ShoppingCartIcon, StarIcon } from "@heroicons/react/24/outline";
+import { StarIcon as StarSolidIcon } from "@heroicons/react/24/solid";
 import { addToCart } from "@/app/lib/shop-actions";
 import { Product } from "@/app/lib/shop-data";
 
@@ -95,6 +96,31 @@ export default function ProductCard({ product }: { product: Product }) {
             {product.name}
           </h3>
         </Link>
+
+        {/* Rating display */}
+        {product.reviewCount && product.reviewCount > 0 ? (
+          <div className="mb-2 flex items-center gap-1">
+            <div className="flex">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <StarSolidIcon
+                  key={star}
+                  className={`h-3 w-3 ${
+                    star <= Math.round(product.averageRating || 0)
+                      ? "text-yellow-400"
+                      : "text-gray-200"
+                  }`}
+                />
+              ))}
+            </div>
+            <span className="text-xs text-gray-500">
+              {product.averageRating?.toFixed(1)} ({product.reviewCount})
+            </span>
+          </div>
+        ) : (
+          <div className="mb-2 flex items-center gap-1">
+            <span className="text-xs text-gray-400">No reviews yet</span>
+          </div>
+        )}
 
         {/* Price - minimal styling */}
         <div className="mt-auto">

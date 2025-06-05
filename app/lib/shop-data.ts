@@ -5,6 +5,34 @@ import { db } from "@/db";
 // Use the singleton Prisma client
 const prisma = db;
 
+// Helper function to calculate average rating and review count
+async function addReviewData(products: any[]): Promise<Product[]> {
+  const productsWithReviews = await Promise.all(
+    products.map(async (product) => {
+      const reviews = await prisma.review.findMany({
+        where: { productId: product.id },
+        select: { rating: true },
+      });
+
+      const averageRating =
+        reviews.length > 0
+          ? reviews.reduce((sum, review) => sum + review.rating, 0) /
+            reviews.length
+          : 0;
+
+      return {
+        ...product,
+        price: Number(product.price),
+        salePrice: product.salePrice ? Number(product.salePrice) : null,
+        averageRating: Math.round(averageRating * 10) / 10, // Round to 1 decimal place
+        reviewCount: reviews.length,
+      };
+    }),
+  );
+
+  return productsWithReviews;
+}
+
 // For testing purposes, we'll use a mock database with some sample data
 const mockProducts = [
   {
@@ -143,6 +171,8 @@ export type Product = {
   };
   createdAt: Date;
   updatedAt: Date;
+  averageRating?: number;
+  reviewCount?: number;
 };
 
 export type Category = {
@@ -237,12 +267,8 @@ export async function fetchFeaturedProducts(): Promise<Product[]> {
       take: 8,
     });
 
-    // Convert Decimal objects to numbers
-    return products.map((product) => ({
-      ...product,
-      price: Number(product.price),
-      salePrice: product.salePrice ? Number(product.salePrice) : null,
-    }));
+    // Add review data and convert Decimal objects to numbers
+    return await addReviewData(products);
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch featured products.");
@@ -267,12 +293,8 @@ export async function fetchProductsByCategory(
       orderBy: { name: "asc" },
     });
 
-    // Convert Decimal objects to numbers
-    return products.map((product) => ({
-      ...product,
-      price: Number(product.price),
-      salePrice: product.salePrice ? Number(product.salePrice) : null,
-    }));
+    // Add review data and convert Decimal objects to numbers
+    return await addReviewData(products);
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch products by category.");
@@ -296,12 +318,9 @@ export async function fetchProductBySlug(
 
     if (!product) return null;
 
-    // Convert Decimal objects to numbers
-    return {
-      ...product,
-      price: Number(product.price),
-      salePrice: product.salePrice ? Number(product.salePrice) : null,
-    };
+    // Add review data and convert Decimal objects to numbers
+    const productsWithReviews = await addReviewData([product]);
+    return productsWithReviews[0];
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch product.");
