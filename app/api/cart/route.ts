@@ -7,7 +7,6 @@ export async function GET() {
     const session = await auth();
 
     if (!session?.user?.id) {
-      // For non-logged in users, return an empty cart
       return NextResponse.json({
         id: "guest-cart",
         items: [],
@@ -15,14 +14,12 @@ export async function GET() {
       });
     }
 
-    // Verify the user exists in the database
     const user = await db.user.findUnique({
       where: { id: session.user.id },
     });
 
     if (!user) {
       console.error("User not found in database:", session.user.id);
-      // Return empty cart for invalid user
       return NextResponse.json({
         id: "guest-cart",
         items: [],
@@ -30,7 +27,6 @@ export async function GET() {
       });
     }
 
-    // For logged-in users, fetch from database
     let cart = await db.cart.findUnique({
       where: {
         userId: session.user.id,

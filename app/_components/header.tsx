@@ -7,18 +7,27 @@ import {
   ShoppingBagIcon,
   UserGroupIcon,
   ChartBarIcon,
-  Squares2X2Icon,
+  Squares2X2Icon, // Used for Dashboard in first code, keeping for consistency
   Bars3Icon,
   XMarkIcon,
   InformationCircleIcon,
   BookOpenIcon,
-  ChartBarSquareIcon,
-  CalendarIcon,
-  UserCircleIcon,
-  Cog6ToothIcon,
+  ChartBarSquareIcon, // Used for Progress
+  CalendarIcon, // Used for Book Trainer
+  UserCircleIcon, // Used for My Account and possibly Users
+  Cog6ToothIcon, // Used for Settings
+  CogIcon, // Used for Dashboard in second code
+  UserIcon, // Assuming you have a UserIcon from somewhere or will replace it
+  // If UserIcon is not from @heroicons/react/24/outline, you need to import it from its correct path.
+  // For now, if it causes an error, remove it or replace with UserCircleIcon.
+  // We'll replace this with UserCircleIcon if UserIcon is not available
 } from "@heroicons/react/24/outline";
+
+// Correct import path for NotificationDropdown
+import NotificationDropdown from "../../components/NotificationDropdown";
 import UserDropdown from "./user-dropdown";
 import CartIcon from "./cart-icon";
+
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
@@ -26,6 +35,8 @@ export default function Header() {
   const { data: session } = useSession();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userRole, setUserRole] = useState<string>("USER");
+  const [isLoadingRole, setIsLoadingRole] = useState(true);
 
   // Add scroll event listener to change header style on scroll
   useEffect(() => {
@@ -58,92 +69,135 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [mobileMenuOpen]);
 
-  // Determine user role for conditional navigation
-  const userRole = session?.user?.role || "USER";
+  // Fetch user role from database
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      if (session?.user?.email) {
+        try {
+          const response = await fetch(`/api/user?email=${session.user.email}`);
+          if (response.ok) {
+            const data = await response.json();
+            setUserRole(data.user?.role || "USER");
+          } else {
+            // Handle cases where the API call is not OK, e.g., user not found
+            console.error("Failed to fetch user role:", response.statusText);
+            setUserRole("USER");
+          }
+        } catch (error) {
+          console.error("Error fetching user role:", error);
+          setUserRole("USER"); // Default to USER on error
+        }
+      } else {
+        setUserRole("USER"); // Default to USER if no session or email
+      }
+      setIsLoadingRole(false);
+    };
+
+    if (session !== undefined) {
+      // Fetch role only when session data is loaded (can be null)
+      fetchUserRole();
+    }
+  }, [session]); // Depend on session to re-fetch if session changes
 
   // Toggle mobile menu
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
+  // Helper function to render links based on user role and loading state
+  const renderLink = (
+    href: string,
+    icon: React.ElementType,
+    label: string,
+    roles: string[],
+    isMobile: boolean = false,
+  ) => {
+    // Only render if session exists OR if the link is meant for all (no roles specified)
+    if (!session && roles.length > 0) return null;
+    // If roles are specified, check if userRole is included, or if no specific role is needed
+    if (roles.length > 0 && !roles.includes(userRole) && !isLoadingRole)
+      return null;
+
+    const IconComponent = icon;
+    const LinkComponent = isMobile ? MobileHeaderLink : HeaderLink;
+
+    return (
+      <LinkComponent
+        href={href}
+        onClick={isMobile ? () => setMobileMenuOpen(false) : undefined}
+      >
+        <IconComponent className="mr-1 h-5 w-5" />
+        {label}
+      </LinkComponent>
+    );
+  };
+
   return (
     <header
       className={cn(
-        "fixed top-0 right-0 left-0 z-50 w-full transition-all duration-300 ease-in-out",
+        "fixed top-0 right-0 left-0 z-50 h-20 w-full shadow-lg",
         scrolled
-          ? "bg-[#2A2A2A]/95 py-2 shadow-md backdrop-blur-sm"
-          : "bg-[#2A2A2A]/80 py-4 backdrop-blur-sm",
+          ? "bg-[#2A2A2A]/95 backdrop-blur-sm"
+          : "bg-[#2A2A2A]/80 backdrop-blur-sm",
       )}
     >
-      <div className="container mx-auto flex items-center justify-between px-4">
+      <div className="container mx-auto flex h-full items-center justify-between px-4">
         <div className="flex items-center">
-          <Link href="/" className="mr-8 text-2xl font-bold text-[#D5FC51]">
+          <Link
+            href="/"
+            className="mr-8 text-2xl font-bold whitespace-nowrap text-[#D5FC51]"
+          >
             SixStar Fitness
           </Link>
           {/* Desktop Navigation */}
           <nav className="hidden items-center space-x-1 md:flex">
-            <HeaderLink href="/">
-              <HomeIcon className="mr-1 h-5 w-5" />
-              Home
-            </HeaderLink>
-
-            {/* About link for all users */}
-            <HeaderLink href="/about">
-              <InformationCircleIcon className="mr-1 h-5 w-5" />
-              About
-            </HeaderLink>
-
-            {/* Workouts link for all users */}
-            <HeaderLink href="/workouts">
-              <BookOpenIcon className="mr-1 h-5 w-5" />
-              Workouts
-            </HeaderLink>
-
-            {/* Show Dashboard link for all authenticated users */}
-            {session && (
-              <HeaderLink href="/dashboard">
-                <Squares2X2Icon className="mr-1 h-5 w-5" />
-                Dashboard
-              </HeaderLink>
-            )}
-
-            {/* Progress link for authenticated users */}
-            {session && (
-              <HeaderLink href="/progress">
-                <ChartBarSquareIcon className="mr-1 h-5 w-5" />
-                Progress
-              </HeaderLink>
-            )}
-
-            {/* Book Trainer link for all users */}
-            <HeaderLink href="/book-trainer">
-              <CalendarIcon className="mr-1 h-5 w-5" />
-              Book Trainer
-            </HeaderLink>
-
-            {/* Show Trainers link for all users */}
-            <HeaderLink href="/trainers">
-              <UserGroupIcon className="mr-1 h-5 w-5" />
-              Trainers
-            </HeaderLink>
-
-            {/* Show Reports link for admins only */}
-            {userRole === "ADMIN" && (
-              <HeaderLink href="/reports">
-                <ChartBarIcon className="mr-1 h-5 w-5" />
-                Reports
-              </HeaderLink>
-            )}
-
-            {/* Shop link for all users */}
-            <HeaderLink href="/shop">
-              <ShoppingBagIcon className="mr-1 h-5 w-5" />
-              Shop
-            </HeaderLink>
+            {renderLink("/", HomeIcon, "Home", [])} {/* Always visible */}
+            {renderLink("/about", InformationCircleIcon, "About", [])}{" "}
+            {/* Always visible */}
+            {renderLink("/workouts", BookOpenIcon, "Workouts", [])}{" "}
+            {/* Always visible */}
+            {/* Dashboard: Show for ADMIN, or all authenticated users (depending on your logic) */}
+            {/* Using CogIcon for admin dashboard as in second code, otherwise Squares2X2Icon */}
+            {session && (userRole === "ADMIN" || userRole === "TRAINER")
+              ? renderLink("/admin", CogIcon, "Dashboard", ["ADMIN", "TRAINER"])
+              : session
+                ? renderLink("/dashboard", Squares2X2Icon, "Dashboard", [
+                    "USER",
+                  ]) // Regular user dashboard
+                : null}
+            {session &&
+              renderLink("/progress", ChartBarSquareIcon, "Progress", [
+                "USER",
+                "ADMIN",
+                "TRAINER",
+              ])}{" "}
+            {/* For all authenticated users */}
+            {renderLink("/book-trainer", CalendarIcon, "Book Trainer", [])}{" "}
+            {/* Always visible */}
+            {renderLink("/trainers", UserGroupIcon, "Trainers", [])}{" "}
+            {/* Always visible */}
+            {/* Users: Show for ADMIN and TRAINER */}
+            {isLoadingRole
+              ? null
+              : (userRole === "ADMIN" || userRole === "TRAINER") &&
+                renderLink("/users", UserCircleIcon, "Users", [
+                  "ADMIN",
+                  "TRAINER",
+                ])}
+            {/* Reports: Show for ADMIN only */}
+            {isLoadingRole
+              ? null
+              : userRole === "ADMIN" &&
+                renderLink("/reports", ChartBarIcon, "Reports", ["ADMIN"])}
+            {renderLink("/shop", ShoppingBagIcon, "Shop", [])}{" "}
+            {/* Always visible */}
           </nav>
         </div>
 
         <div className="flex items-center space-x-4">
+          {/* Notifications - only show for authenticated users */}
+          {session && <NotificationDropdown />}
+
           {/* Cart Icon */}
           <CartIcon />
 
@@ -168,118 +222,73 @@ export default function Header() {
       {mobileMenuOpen && (
         <div
           id="mobile-menu"
-          className="absolute top-full left-0 w-full bg-[#2A2A2A]/95 px-4 py-2 shadow-lg backdrop-blur-sm transition-all duration-300 ease-in-out md:hidden"
+          className="absolute top-full left-0 w-full bg-[#2A2A2A]/95 px-4 py-2 shadow-lg backdrop-blur-sm md:hidden"
         >
           <div className="flex flex-col space-y-1">
-            <MobileHeaderLink href="/" onClick={() => setMobileMenuOpen(false)}>
-              <HomeIcon className="mr-2 h-5 w-5" />
-              Home
-            </MobileHeaderLink>
-
-            {/* About link for all users */}
-            <MobileHeaderLink
-              href="/about"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <InformationCircleIcon className="mr-2 h-5 w-5" />
-              About
-            </MobileHeaderLink>
-
-            {/* Workouts link for all users */}
-            <MobileHeaderLink
-              href="/workouts"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <BookOpenIcon className="mr-2 h-5 w-5" />
-              Workouts
-            </MobileHeaderLink>
-
-            {/* Show Dashboard link for all authenticated users */}
-            {session && (
-              <MobileHeaderLink
-                href="/dashboard"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Squares2X2Icon className="mr-2 h-5 w-5" />
-                Dashboard
-              </MobileHeaderLink>
+            {renderLink("/", HomeIcon, "Home", [], true)}
+            {renderLink("/about", InformationCircleIcon, "About", [], true)}
+            {renderLink("/workouts", BookOpenIcon, "Workouts", [], true)}
+            {/* Mobile Dashboard link */}
+            {session && (userRole === "ADMIN" || userRole === "TRAINER")
+              ? renderLink(
+                  "/admin",
+                  CogIcon,
+                  "Dashboard",
+                  ["ADMIN", "TRAINER"],
+                  true,
+                )
+              : session
+                ? renderLink(
+                    "/dashboard",
+                    Squares2X2Icon,
+                    "Dashboard",
+                    ["USER"],
+                    true,
+                  )
+                : null}
+            {session &&
+              renderLink(
+                "/progress",
+                ChartBarSquareIcon,
+                "Progress",
+                ["USER", "ADMIN", "TRAINER"],
+                true,
+              )}
+            {renderLink(
+              "/book-trainer",
+              CalendarIcon,
+              "Book Trainer",
+              [],
+              true,
             )}
-
-            {/* Progress link for authenticated users */}
-            {session && (
-              <MobileHeaderLink
-                href="/progress"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <ChartBarSquareIcon className="mr-2 h-5 w-5" />
-                Progress
-              </MobileHeaderLink>
-            )}
-
-            {/* Book Trainer link for all users */}
-            <MobileHeaderLink
-              href="/book-trainer"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <CalendarIcon className="mr-2 h-5 w-5" />
-              Book Trainer
-            </MobileHeaderLink>
-
-            {/* Show Trainers link for all users */}
-            <MobileHeaderLink
-              href="/trainers"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <UserGroupIcon className="mr-2 h-5 w-5" />
-              Trainers
-            </MobileHeaderLink>
-
-            {/* Show Reports link for admins only */}
-            {userRole === "ADMIN" && (
-              <MobileHeaderLink
-                href="/reports"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <ChartBarIcon className="mr-2 h-5 w-5" />
-                Reports
-              </MobileHeaderLink>
-            )}
-
-            {/* Shop link for all users */}
-            <MobileHeaderLink
-              href="/shop"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <ShoppingBagIcon className="mr-2 h-5 w-5" />
-              Shop
-            </MobileHeaderLink>
-
-            {/* Cart link for all users */}
-            <MobileHeaderLink
-              href="/shop/cart"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <ShoppingBagIcon className="mr-2 h-5 w-5" />
-              Cart
-            </MobileHeaderLink>
-
-            {/* My Account link */}
-            <MobileHeaderLink
-              href="/account"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <UserCircleIcon className="mr-2 h-5 w-5" />
-              My Account
-            </MobileHeaderLink>
-
-            {/* Settings link */}
-            <MobileHeaderLink
-              href="/settings"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <Cog6ToothIcon className="mr-2 h-5 w-5" />
-              Settings
-            </MobileHeaderLink>
+            {renderLink("/trainers", UserGroupIcon, "Trainers", [], true)}
+            {/* Mobile Users link */}
+            {isLoadingRole
+              ? null
+              : (userRole === "ADMIN" || userRole === "TRAINER") &&
+                renderLink(
+                  "/users",
+                  UserCircleIcon,
+                  "Users",
+                  ["ADMIN", "TRAINER"],
+                  true,
+                )}
+            {/* Mobile Reports link */}
+            {isLoadingRole
+              ? null
+              : userRole === "ADMIN" &&
+                renderLink(
+                  "/reports",
+                  ChartBarIcon,
+                  "Reports",
+                  ["ADMIN"],
+                  true,
+                )}
+            {renderLink("/shop", ShoppingBagIcon, "Shop", [], true)}
+            {renderLink("/shop/cart", ShoppingBagIcon, "Cart", [], true)}{" "}
+            {/* Cart has its own mobile link */}
+            {renderLink("/account", UserCircleIcon, "My Account", [], true)}
+            {renderLink("/settings", Cog6ToothIcon, "Settings", [], true)}
           </div>
         </div>
       )}
@@ -299,9 +308,9 @@ function HeaderLink({ href, children }: HeaderLinkProps) {
       className={cn(
         "flex items-center px-3 py-2 text-sm font-medium",
         "text-white hover:text-[#D5FC51]",
-        "transition-all duration-200",
         "border-b-2 border-transparent hover:border-[#D5FC51]",
         "rounded-md hover:bg-[#2A2A2A]/50",
+        "!transition-none", // Override any global transitions
       )}
     >
       {children}
@@ -323,9 +332,9 @@ function MobileHeaderLink({ href, children, onClick }: MobileHeaderLinkProps) {
       className={cn(
         "flex items-center px-4 py-3 text-sm font-medium",
         "text-white hover:text-[#D5FC51]",
-        "transition-all duration-200",
         "border-l-4 border-transparent hover:border-[#D5FC51]",
         "rounded-md hover:bg-[#2A2A2A]/70",
+        "!transition-none", // Override any global transitions
       )}
     >
       {children}

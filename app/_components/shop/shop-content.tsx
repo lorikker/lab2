@@ -7,49 +7,13 @@ import ProductCard from "./product-card";
 import BundleCard from "./bundle-card";
 import ShopPagination from "./shop-pagination";
 
-interface Product {
+type ShopItem = {
   id: string;
   name: string;
   description: string;
   price: number;
-  salePrice?: number;
-  images: string[];
-  category: {
-    id: string;
-    name: string;
-    slug: string;
-  };
-  featured: boolean;
-  slug: string;
-}
-
-interface Bundle {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  salePrice?: number | null;
-  images: string[];
-  featured: boolean;
-  slug: string;
-  items?: Array<{
-    id: string;
-    quantity: number;
-    product: {
-      id: string;
-      name: string;
-      price: number;
-    };
-  }>;
-}
-
-type ShopItem = (Product & { type: "product" }) | (Bundle & { type: "bundle" });
-
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-}
+  type: "product" | "bundle";
+};
 
 interface ShopContentProps {
   searchParams?: {
