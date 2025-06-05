@@ -101,48 +101,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user has already reviewed this product
-    const existingReview = await db.review.findUnique({
-      where: {
-        productId_userId: {
-          productId,
-          userId: session.user.id,
-        },
-      },
-    });
-
-    if (existingReview) {
-      // Update existing review
-      const updatedReview = await db.review.update({
-        where: {
-          id: existingReview.id,
-        },
-        data: {
-          rating,
-          comment,
-        },
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-          product: {
-            select: {
-              id: true,
-              name: true,
-              slug: true,
-            },
-          },
-        },
-      });
-
-      return NextResponse.json(
-        { message: "Review updated successfully", review: updatedReview },
-        { status: 200 },
-      );
-    }
+    // Always create a new review (allow multiple reviews per user per product)
 
     // Create new review
     const newReview = await db.review.create({

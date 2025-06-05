@@ -182,7 +182,6 @@ model Review {
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
 
-  @@unique([productId, userId])
   @@map("reviews")
 }
 
