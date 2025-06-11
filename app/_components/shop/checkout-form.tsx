@@ -1,10 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import type { Cart } from "@/app/lib/shop-data";
 import { createOrder } from "@/app/lib/shop-actions";
 import { useCoupon } from "@/app/_contexts/coupon-context";
+
+function getCardType(number: string) {
+  const re = {
+    visa: /^4/,
+    mastercard: /^5[1-5]/,
+    amex: /^3[47]/,
+    discover: /^6(?:011|5)/,
+  };
+  if (re.visa.test(number)) return "Visa";
+  if (re.mastercard.test(number)) return "MasterCard";
+  if (re.amex.test(number)) return "American Express";
+  if (re.discover.test(number)) return "Discover";
+  return "";
+}
 
 export default function CheckoutForm({ cart }: { cart: Cart }) {
   const { appliedCoupon, discount, removeCoupon } = useCoupon();
@@ -75,6 +89,31 @@ export default function CheckoutForm({ cart }: { cart: Cart }) {
 
   // Debug: Log state changes
   console.log("Checkout form state:", state);
+
+  const [cardNumber, setCardNumber] = useState("");
+  const [expiry, setExpiry] = useState("");
+  const [cvc, setCvc] = useState("");
+  const cardType = getCardType(cardNumber.replace(/\s/g, ""));
+
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, ""); // Only digits
+    value = value.slice(0, 16); // Max 16 digits
+    value = value.replace(/(.{4})/g, "$1 ").trim(); // Format as 1234 5678 9012 3456
+    setCardNumber(value);
+  };
+
+  const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, ""); // Only digits
+    if (value.length > 4) value = value.slice(0, 4);
+    if (value.length > 2) value = value.slice(0, 2) + "/" + value.slice(2);
+    setExpiry(value);
+  };
+
+  const handleCvcChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, ""); // Only digits
+    value = value.slice(0, 4); // 3 or 4 digits
+    setCvc(value);
+  };
 
   return (
     <form action={formAction} className="space-y-8">
@@ -303,13 +342,18 @@ export default function CheckoutForm({ cart }: { cart: Cart }) {
               type="text"
               id="cardNumber"
               name="cardNumber"
-              value={formData.cardNumber}
-              onChange={handleChange}
+              value={cardNumber}
+              onChange={handleCardNumberChange}
               required
               maxLength={19} // 16 digits + 3 spaces
               placeholder="1234 5678 9012 3456"
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-[#D5FC51] focus:ring-1 focus:ring-[#D5FC51] focus:outline-none"
             />
+            {cardType && (
+              <div className="mt-1 text-sm text-gray-600">
+                Card Type: {cardType}
+              </div>
+            )}
           </div>
 
           <div>
@@ -323,8 +367,8 @@ export default function CheckoutForm({ cart }: { cart: Cart }) {
               type="text"
               id="cardExpiry"
               name="cardExpiry"
-              value={formData.cardExpiry}
-              onChange={handleChange}
+              value={expiry}
+              onChange={handleExpiryChange}
               required
               maxLength={5} // MM/YY format (5 characters)
               placeholder="MM/YY"
@@ -343,8 +387,8 @@ export default function CheckoutForm({ cart }: { cart: Cart }) {
               type="text"
               id="cardCvc"
               name="cardCvc"
-              value={formData.cardCvc}
-              onChange={handleChange}
+              value={cvc}
+              onChange={handleCvcChange}
               required
               maxLength={4} // Most cards have 3 digits, Amex has 4
               placeholder="123"
