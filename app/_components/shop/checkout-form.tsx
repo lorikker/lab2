@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import type { Cart } from "@/app/lib/shop-data";
 import { useCoupon } from "@/app/_contexts/coupon-context";

@@ -102,7 +102,7 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 pb-10">
       {error && (
         <div className="rounded-md bg-red-50 p-4">
           <div className="flex">
@@ -330,6 +330,10 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
           </div>
         </div>
       </div>
+
+      {product?.id && (
+        <input type="hidden" name="id" value={product.id} />
+      )}
 
       <div className="flex justify-end space-x-3">
         <button
