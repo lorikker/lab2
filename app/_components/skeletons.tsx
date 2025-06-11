@@ -12,7 +12,7 @@ const shimmer =
 
 const MainSkeleton = ({ children }: { children: React.ReactNode }) => {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gray-50 py-8 font-sans">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gray-50 pt-24 font-sans">
       <div className="flex flex-col items-start justify-center gap-3">
         {children}
       </div>

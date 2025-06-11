@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer className="bg-[#2A2A2A] py-12 text-white">
       <div className="container">
-        <div className="grid gap-8 md:grid-cols-4">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
           <div>
             <h3 className="mb-4 text-xl font-bold text-[#D5FC51]">
               SixStarFitness
@@ -26,44 +26,44 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/about"
+                  href="/trainers"
                   className="text-[#D9D9D9] hover:text-[#D5FC51]"
                 >
-                  About Us
+                  Trainers
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/services"
+                  href="/membership"
                   className="text-[#D9D9D9] hover:text-[#D5FC51]"
                 >
-                  Services
+                  Membership Plans
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/pricing"
+                  href="/shop"
                   className="text-[#D9D9D9] hover:text-[#D5FC51]"
                 >
-                  Pricing
+                  Shop
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/contact"
+                  href="/account"
                   className="text-[#D9D9D9] hover:text-[#D5FC51]"
                 >
-                  Contact
+                  My Account
                 </Link>
               </li>
             </ul>
           </div>
           <div>
-            <h3 className="mb-4 text-xl font-bold text-white">Services</h3>
+            <h3 className="mb-4 text-xl font-bold text-white">Our Services</h3>
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="/services"
+                  href="/trainers"
                   className="text-[#D9D9D9] hover:text-[#D5FC51]"
                 >
                   Personal Training
@@ -71,34 +71,79 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/services"
+                  href="/trainers"
                   className="text-[#D9D9D9] hover:text-[#D5FC51]"
                 >
-                  Group Classes
+                  Online Training
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/services"
+                  href="/trainers"
                   className="text-[#D9D9D9] hover:text-[#D5FC51]"
                 >
-                  Nutrition Planning
+                  Diet & Nutrition
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/services"
+                  href="/membership"
                   className="text-[#D9D9D9] hover:text-[#D5FC51]"
                 >
-                  Fitness Assessment
+                  Gym Membership
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/services"
+                  href="/shop"
                   className="text-[#D9D9D9] hover:text-[#D5FC51]"
                 >
-                  Online Coaching
+                  Fitness Products
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="mb-4 text-xl font-bold text-white">Account</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link
+                  href="/login"
+                  className="text-[#D9D9D9] hover:text-[#D5FC51]"
+                >
+                  Login
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/register"
+                  className="text-[#D9D9D9] hover:text-[#D5FC51]"
+                >
+                  Register
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/account"
+                  className="text-[#D9D9D9] hover:text-[#D5FC51]"
+                >
+                  My Profile
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/settings"
+                  className="text-[#D9D9D9] hover:text-[#D5FC51]"
+                >
+                  Settings
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/trainers/apply"
+                  className="text-[#D9D9D9] hover:text-[#D5FC51]"
+                >
+                  Become a Trainer
                 </Link>
               </li>
             </ul>

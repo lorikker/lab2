@@ -10,6 +10,7 @@ import {
   PowerIcon,
 } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
+import { revokeAdminAccess } from "@/app/_components/dashboard-access-guard";
 
 export default function UserDropdown() {
   const { data: session, status } = useSession();
@@ -35,6 +36,9 @@ export default function UserDropdown() {
   }, []);
 
   const handleLogout = async () => {
+    // Revoke admin access before logging out
+    revokeAdminAccess();
+
     await signOut({ redirect: false });
     router.push("/");
     router.refresh();

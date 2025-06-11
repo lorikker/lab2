@@ -13,7 +13,7 @@ import {
   InformationCircleIcon,
   BookOpenIcon,
   ChartBarSquareIcon, // Used for Progress
-  CalendarIcon, // Used for Book Trainer
+  CalendarIcon, // Used for Book Trainer and My Schedule
   UserCircleIcon, // Used for My Account and possibly Users
   Cog6ToothIcon, // Used for Settings
   CogIcon, // Used for Dashboard in second code
@@ -87,7 +87,7 @@ export default function Header() {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
-  // Helper function to render links based on user role and loading state
+  // Helper function to render links based on user role
   const renderLink = (
     href: string,
     icon: React.ElementType,
@@ -97,9 +97,8 @@ export default function Header() {
   ) => {
     // Only render if session exists OR if the link is meant for all (no roles specified)
     if (!session && roles.length > 0) return null;
-    // If roles are specified, check if userRole is included, or if no specific role is needed
-    if (roles.length > 0 && !roles.includes(userRole) && !isLoadingRole)
-      return null;
+    // If roles are specified, check if userRole is included
+    if (roles.length > 0 && !roles.includes(userRole)) return null;
 
     const IconComponent = icon;
     const LinkComponent = isMobile ? MobileHeaderLink : HeaderLink;
@@ -137,41 +136,14 @@ export default function Header() {
             {renderLink("/", HomeIcon, "Home", [])} {/* Always visible */}
             {renderLink("/about", InformationCircleIcon, "About", [])}{" "}
             {/* Always visible */}
-            {renderLink("/workouts", BookOpenIcon, "Workouts", [])}{" "}
-            {/* Always visible */}
-            {/* Dashboard: Show for ADMIN, or all authenticated users (depending on your logic) */}
-            {/* Using CogIcon for admin dashboard as in second code, otherwise Squares2X2Icon */}
-            {session && (userRole === "ADMIN" || userRole === "TRAINER")
-              ? renderLink("/admin", CogIcon, "Dashboard", ["ADMIN", "TRAINER"])
-              : session
-                ? renderLink("/dashboard", Squares2X2Icon, "Dashboard", [
-                    "USER",
-                  ]) // Regular user dashboard
+            {/* Dashboard: Show only for ADMIN and TRAINER */}
+            {session && userRole === "ADMIN"
+              ? renderLink("/admin", CogIcon, "Admin Dashboard", ["ADMIN"])
+              : session && userRole === "TRAINER"
+                ? renderLink("/admin/manage-trainers", CalendarIcon, "My Schedule", ["TRAINER"])
                 : null}
-            {session &&
-              renderLink("/progress", ChartBarSquareIcon, "Progress", [
-                "USER",
-                "ADMIN",
-                "TRAINER",
-              ])}{" "}
-            {/* For all authenticated users */}
-            {renderLink("/book-trainer", CalendarIcon, "Book Trainer", [])}{" "}
-            {/* Always visible */}
             {renderLink("/trainers", UserGroupIcon, "Trainers", [])}{" "}
             {/* Always visible */}
-            {/* Users: Show for ADMIN and TRAINER */}
-            {isLoadingRole
-              ? null
-              : (userRole === "ADMIN" || userRole === "TRAINER") &&
-                renderLink("/users", UserCircleIcon, "Users", [
-                  "ADMIN",
-                  "TRAINER",
-                ])}
-            {/* Reports: Show for ADMIN only */}
-            {isLoadingRole
-              ? null
-              : userRole === "ADMIN" &&
-                renderLink("/reports", ChartBarIcon, "Reports", ["ADMIN"])}
             {renderLink("/shop", ShoppingBagIcon, "Shop", [])}{" "}
             {/* Always visible */}
           </nav>
@@ -210,63 +182,25 @@ export default function Header() {
           <div className="flex flex-col space-y-1">
             {renderLink("/", HomeIcon, "Home", [], true)}
             {renderLink("/about", InformationCircleIcon, "About", [], true)}
-            {renderLink("/workouts", BookOpenIcon, "Workouts", [], true)}
-            {/* Mobile Dashboard link */}
-            {session && (userRole === "ADMIN" || userRole === "TRAINER")
+            {/* Mobile Dashboard link - Only for ADMIN and TRAINER */}
+            {session && userRole === "ADMIN"
               ? renderLink(
                   "/admin",
                   CogIcon,
-                  "Dashboard",
-                  ["ADMIN", "TRAINER"],
+                  "Admin Dashboard",
+                  ["ADMIN"],
                   true,
                 )
-              : session
+              : session && userRole === "TRAINER"
                 ? renderLink(
-                    "/dashboard",
-                    Squares2X2Icon,
-                    "Dashboard",
-                    ["USER"],
+                    "/admin/manage-trainers",
+                    CalendarIcon,
+                    "My Schedule",
+                    ["TRAINER"],
                     true,
                   )
                 : null}
-            {session &&
-              renderLink(
-                "/progress",
-                ChartBarSquareIcon,
-                "Progress",
-                ["USER", "ADMIN", "TRAINER"],
-                true,
-              )}
-            {renderLink(
-              "/book-trainer",
-              CalendarIcon,
-              "Book Trainer",
-              [],
-              true,
-            )}
             {renderLink("/trainers", UserGroupIcon, "Trainers", [], true)}
-            {/* Mobile Users link */}
-            {isLoadingRole
-              ? null
-              : (userRole === "ADMIN" || userRole === "TRAINER") &&
-                renderLink(
-                  "/users",
-                  UserCircleIcon,
-                  "Users",
-                  ["ADMIN", "TRAINER"],
-                  true,
-                )}
-            {/* Mobile Reports link */}
-            {isLoadingRole
-              ? null
-              : userRole === "ADMIN" &&
-                renderLink(
-                  "/reports",
-                  ChartBarIcon,
-                  "Reports",
-                  ["ADMIN"],
-                  true,
-                )}
             {renderLink("/shop", ShoppingBagIcon, "Shop", [], true)}
             {renderLink("/shop/cart", ShoppingBagIcon, "Cart", [], true)}{" "}
             {/* Cart has its own mobile link */}

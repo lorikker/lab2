@@ -18,9 +18,6 @@ export default async function CheckoutSuccessPage({
   const orderId = searchParams.orderId;
   const session = await auth();
 
-  console.log("Success page - orderId:", orderId);
-  console.log("Success page - session:", session?.user?.id);
-
   if (!orderId) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-white pt-24 font-sans">
@@ -43,7 +40,6 @@ export default async function CheckoutSuccessPage({
   // Fetch the order from the database
   let order = null;
   try {
-    console.log("Fetching order with ID:", orderId);
     order = await db.order.findUnique({
       where: { id: orderId },
       include: {
@@ -55,7 +51,6 @@ export default async function CheckoutSuccessPage({
         user: true,
       },
     });
-    console.log("Found order:", order ? "Yes" : "No");
 
     // Convert Decimal objects to numbers
     if (order) {
@@ -109,141 +104,110 @@ export default async function CheckoutSuccessPage({
     }).format(price);
   };
 
+  // Get customer info from order or user
+  const customerInfo = order.user
+    ? {
+        name: `${order.user.firstName || ""} ${order.user.lastName || ""}`.trim(),
+        email: order.user.email,
+        address: order.user.address,
+        city: order.user.city,
+        state: order.user.state,
+        zipCode: order.user.zipCode,
+        country: order.user.country,
+      }
+    : {};
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start bg-white pt-24 font-sans">
-      <div className="container mx-auto px-4 py-8">
-        {/* Success Message */}
-        <div className="mx-auto max-w-2xl rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm">
-          <CheckCircleIcon className="mx-auto h-16 w-16 text-green-500" />
-
-          <h1 className="mt-4 text-3xl font-bold text-[#2A2A2A]">
-            Order Confirmed!
-          </h1>
-
-          <p className="mt-2 text-gray-600">
-            Thank you for your purchase. Your order has been successfully
-            placed.
-          </p>
-
-          <div className="mt-6 rounded-md bg-gray-50 p-4">
-            <p className="text-sm text-gray-600">Order Number</p>
-            <p className="text-lg font-medium text-[#2A2A2A]">
-              #{order.id.substring(0, 8)}
-            </p>
+    <main className="min-h-screen bg-white pt-24 font-sans">
+      <div className="container mx-auto max-w-4xl px-4 py-8">
+        {/* Success Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+            <CheckCircleIcon className="h-10 w-10 text-green-500" />
           </div>
+          <h1 className="text-3xl font-bold text-[#2A2A2A] mb-2">Order Confirmed!</h1>
+          <p className="text-gray-600">Thank you for your purchase. Your order has been successfully placed.</p>
+        </div>
 
-          <div className="mt-4 rounded-md bg-blue-50 p-4">
-            <p className="text-sm text-blue-600">Order Date</p>
-            <p className="text-lg font-medium text-blue-800">
-              {formatDate(order.createdAt)}
-            </p>
-          </div>
-
-          <div className="mt-4 rounded-md bg-green-50 p-4">
-            <p className="text-sm text-green-600">Total Amount</p>
-            <p className="text-lg font-medium text-green-800">
-              {formatPrice(order.total)}
-            </p>
-          </div>
-
-          <p className="mt-6 text-gray-600">
-            We've sent a confirmation email with your order details.
-          </p>
-
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Link
-              href="/shop"
-              className="rounded-md bg-[#D5FC51] px-6 py-3 font-medium text-[#2A2A2A] transition-colors hover:bg-[#D5FC51]/80"
-            >
-              Continue Shopping
-            </Link>
-
-            <Link
-              href="/dashboard/orders"
-              className="rounded-md border border-gray-300 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50"
-            >
-              View All Orders
-            </Link>
+        {/* Order Details Card */}
+        <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            <div>
+              <p className="text-sm text-gray-500 mb-1">Order Number</p>
+              <p className="font-mono font-semibold text-[#2A2A2A]">#{order.id.slice(-8).toUpperCase()}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 mb-1">Order Date</p>
+              <p className="font-semibold text-[#2A2A2A]">{formatDate(order.createdAt)}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 mb-1">Total Amount</p>
+              <p className="font-semibold text-[#2A2A2A] text-lg">{formatPrice(order.total)}</p>
+            </div>
           </div>
         </div>
 
+
+
         {/* Order Summary */}
-        <div className="mx-auto mt-12 max-w-4xl">
-          <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
-            <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-[#2A2A2A]">
-                  Order Summary
-                </h2>
-                <OrderReceiptButton order={order} />
-              </div>
-            </div>
+        <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-[#2A2A2A]">Order Summary</h2>
+            <button className="text-sm text-blue-600 hover:text-blue-800">View Receipt</button>
+          </div>
 
-            <div className="px-6 py-4">
-              <div className="flow-root">
-                <ul className="-my-5 divide-y divide-gray-200">
-                  {order.items.map((item: any) => (
-                    <li key={item.id} className="py-5">
-                      <div className="flex items-center space-x-4">
-                        <div className="flex-shrink-0 rounded-md border border-gray-200 bg-gray-100 p-2">
-                          {item.product?.images?.[0] ? (
-                            <img
-                              src={item.product.images[0]}
-                              alt={item.product.name}
-                              className="h-16 w-16 object-contain"
-                            />
-                          ) : (
-                            <div className="flex h-16 w-16 items-center justify-center">
-                              <span className="text-xs text-gray-400">
-                                No image
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium text-gray-900">
-                            {item.product?.name ||
-                              "Product no longer available"}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            Qty: {item.quantity} × {formatPrice(item.price)}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm font-medium text-gray-900">
-                            {formatPrice(item.price * item.quantity)}
-                          </p>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+          {/* Order Items */}
+          <div className="space-y-4">
+            {order.items.map((item: any) => (
+              <div key={item.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center">
+                    <span className="text-xs text-gray-500">No Image</span>
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-[#2A2A2A]">{item.product?.name}</h3>
+                    <p className="text-sm text-gray-500">Qty: {item.quantity} × {formatPrice(item.price)}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="font-semibold text-[#2A2A2A]">{formatPrice(item.price * item.quantity)}</p>
+                </div>
               </div>
-            </div>
+            ))}
+          </div>
 
-            <div className="border-t border-gray-200 bg-gray-50 px-6 py-4">
-              <div className="flex justify-between">
-                <p className="text-sm font-medium text-gray-900">Order Total</p>
-                <p className="text-lg font-semibold text-[#2A2A2A]">
-                  {formatPrice(order.total)}
-                </p>
-              </div>
+          {/* Order Total */}
+          <div className="mt-6 pt-4 border-t border-gray-200">
+            <div className="flex justify-between items-center">
+              <span className="text-lg font-semibold text-[#2A2A2A]">Order Total</span>
+              <span className="text-lg font-bold text-[#2A2A2A]">{formatPrice(order.total)}</span>
             </div>
           </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="mt-8 flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0 justify-center">
+          <Link
+            href="/shop"
+            className="flex items-center justify-center rounded-lg bg-[#D5FC51] px-6 py-3 text-[#2A2A2A] font-medium hover:opacity-90 transition-opacity"
+          >
+            Continue Shopping
+          </Link>
+          <Link
+            href="/"
+            className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-6 py-3 text-[#2A2A2A] font-medium hover:bg-gray-50 transition-colors"
+          >
+            Return to Home
+          </Link>
+        </div>
+
+        {/* Admin Note */}
+        <div className="mt-6 rounded-lg bg-blue-50 p-4">
+          <p className="text-sm text-blue-700">
+            📋 <strong>Admin Note:</strong> This order has been saved and can be viewed in the admin dashboard under Order Bills.
+          </p>
         </div>
       </div>
     </main>
-  );
-}
-
-// OrderReceiptButton component
-function OrderReceiptButton({ order: _order }: { order: any }) {
-  return (
-    <Link
-      href={`/dashboard/orders`}
-      className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
-    >
-      View Receipt
-    </Link>
   );
 }

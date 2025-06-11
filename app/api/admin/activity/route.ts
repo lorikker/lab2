@@ -46,6 +46,7 @@ export async function GET(request: NextRequest) {
         id: true,
         name: true,
         membershipType: true,
+        status: true,
         startDate: true,
         endDate: true,
         createdAt: true
@@ -54,7 +55,7 @@ export async function GET(request: NextRequest) {
 
     // Get system stats for the last 30 days
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    
+
     const monthlyStats = {
       newUsers: await prisma.user.count({
         where: {
@@ -63,10 +64,10 @@ export async function GET(request: NextRequest) {
           }
         }
       }),
-      newTrainers: await prisma.approvedTrainers.count({
+      newTrainers: await prisma.trainers.count({
         where: {
-          approvedAt: {
-            gte: thirtyDaysAgo.toISOString()
+          createdAt: {
+            gte: thirtyDaysAgo
           }
         }
       }),
@@ -79,7 +80,7 @@ export async function GET(request: NextRequest) {
       }),
       pendingApplications: await prisma.trainerApplications.count({
         where: {
-          status: 'PENDING'
+          status: 'pending'
         }
       })
     };

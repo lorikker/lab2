@@ -289,7 +289,7 @@ export default function NotificationDropdown() {
           setIsOpen(!isOpen);
           if (!isOpen) fetchNotifications();
         }}
-        className="relative p-2 text-gray-400 transition-colors hover:text-white"
+        className="relative cursor-pointer p-2 text-gray-400 transition-colors hover:text-white"
       >
         <BellIcon className="h-6 w-6" />
         {unreadCount > 0 && (
@@ -301,15 +301,16 @@ export default function NotificationDropdown() {
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 z-50 mt-2 w-80 rounded-xl border border-gray-700 bg-gray-800 shadow-xl">
+        <div className="absolute right-0 z-50 mt-2 w-80 rounded-xl border border-gray-600 bg-[#2A2A2A] shadow-xl">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-gray-700 p-4">
+          <div className="flex items-center justify-between border-b border-gray-600 p-4">
             <h3 className="text-lg font-bold text-white">Notifications</h3>
             <div className="flex items-center space-x-2">
               {unreadCount > 0 && (
                 <button
                   onClick={markAllAsRead}
-                  className="text-sm text-[#D5FC51] transition-colors hover:text-green-400"
+                  className="text-sm text-[#D5FC51] transition-colors hover:text-green-400 hover:underline"
+                  style={{ cursor: 'pointer' }}
                 >
                   Mark all read
                 </button>
@@ -317,6 +318,7 @@ export default function NotificationDropdown() {
               <button
                 onClick={() => setIsOpen(false)}
                 className="text-gray-400 transition-colors hover:text-white"
+                style={{ cursor: 'pointer' }}
               >
                 <XMarkIcon className="h-5 w-5" />
               </button>
@@ -328,22 +330,23 @@ export default function NotificationDropdown() {
             {isLoading ? (
               <div className="p-4 text-center">
                 <div className="mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-[#D5FC51]"></div>
-                <p className="mt-2 text-sm text-gray-400">
+                <p className="mt-2 text-sm text-white">
                   Loading notifications...
                 </p>
               </div>
             ) : notifications.length === 0 ? (
               <div className="p-4 text-center">
                 <BellIcon className="mx-auto mb-2 h-8 w-8 text-gray-500" />
-                <p className="text-gray-400">No notifications yet</p>
+                <p className="text-white">No notifications yet</p>
               </div>
             ) : (
               notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`cursor-pointer border-b border-gray-700 p-4 transition-colors hover:bg-gray-700/50 ${
-                    !notification.isRead ? "bg-gray-700/30" : ""
+                  className={`border-b border-gray-600 p-4 transition-colors hover:bg-gray-600/50 ${
+                    !notification.isRead ? "bg-gray-600/30" : ""
                   }`}
+                  style={{ cursor: 'pointer' }}
                   onClick={() => handleNotificationClick(notification)}
                 >
                   <div className="flex items-start space-x-3">
@@ -361,10 +364,10 @@ export default function NotificationDropdown() {
                           <div className="h-2 w-2 flex-shrink-0 rounded-full bg-[#D5FC51]"></div>
                         )}
                       </div>
-                      <p className="mt-1 line-clamp-2 text-sm text-gray-400">
+                      <p className="mt-1 line-clamp-2 text-sm text-white">
                         {notification.message}
                       </p>
-                      <p className="mt-2 text-xs text-gray-500">
+                      <p className="mt-2 text-xs text-gray-300">
                         {timeAgo(notification.createdAt)}
                       </p>
                     </div>
@@ -376,13 +379,14 @@ export default function NotificationDropdown() {
 
           {/* Footer */}
           {notifications.length > 0 && (
-            <div className="border-t border-gray-700 p-3 text-center">
+            <div className="border-t border-gray-600 p-3 text-center">
               <button
                 onClick={() => {
                   setIsOpen(false);
                   // You can add navigation to a full notifications page here
                 }}
-                className="text-sm text-[#D5FC51] transition-colors hover:text-green-400"
+                className="text-sm text-[#D5FC51] transition-colors hover:text-green-400 hover:underline"
+                style={{ cursor: 'pointer' }}
               >
                 View all notifications
               </button>

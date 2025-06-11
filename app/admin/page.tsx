@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { grantAdminAccess } from "@/app/_components/dashboard-access-guard";
 import {
   UserGroupIcon,
   DocumentTextIcon,
@@ -20,6 +21,8 @@ import {
   ExclamationTriangleIcon,
   CalendarDaysIcon,
   CreditCardIcon,
+  ShoppingBagIcon,
+  ReceiptPercentIcon,
 } from "@heroicons/react/24/outline";
 
 interface DashboardStats {
@@ -37,6 +40,7 @@ interface Notification {
   title: string;
   message: string;
   createdAt: string;
+  isRead: boolean;
   data?: any;
 }
 
@@ -104,6 +108,9 @@ export default function Dashboard() {
       return;
     }
 
+    // Grant admin access when user successfully accesses admin dashboard
+    grantAdminAccess();
+
     fetchDashboardData();
   }, [session, router]);
 
@@ -140,11 +147,11 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#2A2A2A] via-gray-800 to-gray-900 pt-20">
+      <div className="min-h-screen bg-white pt-20">
         <div className="container mx-auto px-4 py-8">
           <div className="py-16 text-center">
             <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-[#D5FC51]"></div>
-            <p className="text-gray-400">Loading dashboard...</p>
+            <p className="text-gray-600">Loading dashboard...</p>
           </div>
         </div>
       </div>
@@ -152,75 +159,75 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#2A2A2A] via-gray-800 to-gray-900 pt-20">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-[#FFFFFF] pt-20">
+      <div className="container mx-auto px-6 py-12">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="mb-2 text-4xl font-bold text-white">Dashboard</h1>
-          <p className="text-lg text-gray-400">
+        <div className="mb-12">
+          <h1 className="mb-3 text-5xl font-light text-[#2A2A2A]">Dashboard</h1>
+          <p className="text-xl text-[#D9D9D9] font-light">
             Manage your SixStar Fitness platform
           </p>
         </div>
 
-        {/* Stats Cards - Clickable */}
-        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {/* Stats Cards - Minimalistic */}
+        <div className="mb-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           <Link
             href="/dashboard/users"
-            className="group cursor-pointer rounded-2xl border border-gray-700 bg-gray-800/50 p-6 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-[#D5FC51]/50"
+            className="group cursor-pointer rounded-2xl bg-[#FFFFFF] border border-[#D9D9D9]/30 p-8 transition-all duration-200 hover:border-[#D5FC51]/50 hover:shadow-sm"
           >
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col space-y-4">
+              <div className="flex items-center justify-between">
+                <UserIcon className="h-6 w-6 text-[#D9D9D9] group-hover:text-[#D5FC51] transition-colors" />
+                <span className="text-xs font-medium text-[#D9D9D9] uppercase tracking-wider">Users</span>
+              </div>
               <div>
-                <p className="text-sm text-gray-400 transition-colors group-hover:text-[#D5FC51]">
-                  Total Users
-                </p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-3xl font-light text-[#2A2A2A] mb-1">
                   {stats.totalUsers}
                 </p>
-                <p className="mt-1 text-xs text-gray-500">
-                  Click to view all users
+                <p className="text-sm text-[#D9D9D9] font-light">
+                  Total registered
                 </p>
               </div>
-              <UserIcon className="h-8 w-8 text-[#D5FC51] transition-transform group-hover:scale-110" />
             </div>
           </Link>
 
           <Link
             href="/admin/manage-trainers"
-            className="group cursor-pointer rounded-2xl border border-gray-700 bg-gray-800/50 p-6 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-[#D5FC51]/50"
+            className="group cursor-pointer rounded-2xl bg-[#FFFFFF] border border-[#D9D9D9]/30 p-8 transition-all duration-200 hover:border-[#D5FC51]/50 hover:shadow-sm"
           >
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col space-y-4">
+              <div className="flex items-center justify-between">
+                <UserGroupIcon className="h-6 w-6 text-[#D9D9D9] group-hover:text-[#D5FC51] transition-colors" />
+                <span className="text-xs font-medium text-[#D9D9D9] uppercase tracking-wider">Trainers</span>
+              </div>
               <div>
-                <p className="text-sm text-gray-400 transition-colors group-hover:text-[#D5FC51]">
-                  Active Trainers
-                </p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-3xl font-light text-[#2A2A2A] mb-1">
                   {stats.totalTrainers}
                 </p>
-                <p className="mt-1 text-xs text-gray-500">
-                  Click to manage trainers
+                <p className="text-sm text-[#D9D9D9] font-light">
+                  Active trainers
                 </p>
               </div>
-              <UserGroupIcon className="h-8 w-8 text-[#D5FC51] transition-transform group-hover:scale-110" />
             </div>
           </Link>
 
           <Link
             href="/admin/trainer-applications"
-            className="group cursor-pointer rounded-2xl border border-gray-700 bg-gray-800/50 p-6 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-yellow-500/50"
+            className="group cursor-pointer rounded-2xl bg-[#FFFFFF] border border-[#D9D9D9]/30 p-8 transition-all duration-200 hover:border-[#D5FC51]/50 hover:shadow-sm"
           >
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col space-y-4">
+              <div className="flex items-center justify-between">
+                <ClockIcon className="h-6 w-6 text-[#D9D9D9] group-hover:text-[#D5FC51] transition-colors" />
+                <span className="text-xs font-medium text-[#D9D9D9] uppercase tracking-wider">Pending</span>
+              </div>
               <div>
-                <p className="text-sm text-gray-400 transition-colors group-hover:text-yellow-500">
-                  Pending Applications
-                </p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-3xl font-light text-[#2A2A2A] mb-1">
                   {stats.pendingApplications}
                 </p>
-                <p className="mt-1 text-xs text-gray-500">
-                  Click to review applications
+                <p className="text-sm text-[#D9D9D9] font-light">
+                  Applications
                 </p>
               </div>
-              <ClockIcon className="h-8 w-8 text-yellow-500 transition-transform group-hover:scale-110" />
             </div>
           </Link>
 
@@ -237,95 +244,130 @@ export default function Dashboard() {
                 });
               }
             }}
-            className="group cursor-pointer rounded-2xl border border-gray-700 bg-gray-800/50 p-6 text-left backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-[#D5FC51]/50"
+            className="group cursor-pointer rounded-2xl bg-[#FFFFFF] border border-[#D9D9D9]/30 p-8 text-left transition-all duration-200 hover:border-[#D5FC51]/50 hover:shadow-sm"
           >
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col space-y-4">
+              <div className="flex items-center justify-between">
+                <BellIcon className="h-6 w-6 text-[#D9D9D9] group-hover:text-[#D5FC51] transition-colors" />
+                <span className="text-xs font-medium text-[#D9D9D9] uppercase tracking-wider">Alerts</span>
+              </div>
               <div>
-                <p className="text-sm text-gray-400 transition-colors group-hover:text-[#D5FC51]">
-                  Notifications
-                </p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-3xl font-light text-[#2A2A2A] mb-1">
                   {stats.totalNotifications}
                 </p>
-                <p className="mt-1 text-xs text-gray-500">
-                  Click to view notifications
+                <p className="text-sm text-[#D9D9D9] font-light">
+                  Notifications
                 </p>
               </div>
-              <BellIcon className="h-8 w-8 text-[#D5FC51] transition-transform group-hover:scale-110" />
             </div>
           </button>
         </div>
 
         {/* Main Actions */}
-        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mb-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {/* Manage Trainers */}
           <Link
             href="/admin/manage-trainers"
-            className="group rounded-2xl border border-gray-700 bg-gray-800/50 p-8 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-[#D5FC51]/50"
+            className="group rounded-3xl bg-[#FFFFFF] border border-[#D9D9D9]/20 p-10 transition-all duration-200 hover:border-[#D5FC51]/30 hover:shadow-sm"
           >
-            <div className="mb-4 flex items-center">
-              <UserGroupIcon className="mr-3 h-8 w-8 text-[#D5FC51]" />
-              <h3 className="text-xl font-bold text-white">Manage Trainers</h3>
+            <div className="mb-6 flex items-center justify-between">
+              <UserGroupIcon className="h-8 w-8 text-[#D5FC51]" />
+              <span className="text-xs font-medium text-[#D9D9D9] uppercase tracking-wider">Management</span>
             </div>
-            <p className="mb-4 text-gray-400">
+            <h3 className="text-2xl font-light text-[#2A2A2A] mb-3">Manage Trainers</h3>
+            <p className="text-[#D9D9D9] font-light leading-relaxed mb-6">
               View, edit, and remove approved trainers from the platform.
             </p>
-            <div className="flex items-center text-[#D5FC51] transition-colors group-hover:text-white">
-              <span className="text-sm font-medium">Manage Trainers →</span>
+            <div className="flex items-center text-[#D5FC51] group-hover:text-[#2A2A2A] transition-colors">
+              <span className="text-sm font-medium">Manage →</span>
             </div>
           </Link>
 
           {/* Trainer Applications */}
           <Link
             href="/admin/trainer-applications"
-            className="group rounded-2xl border border-gray-700 bg-gray-800/50 p-8 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-[#D5FC51]/50"
+            className="group rounded-3xl bg-[#FFFFFF] border border-[#D9D9D9]/20 p-10 transition-all duration-200 hover:border-[#D5FC51]/30 hover:shadow-sm"
           >
-            <div className="mb-4 flex items-center">
-              <DocumentTextIcon className="mr-3 h-8 w-8 text-[#D5FC51]" />
-              <h3 className="text-xl font-bold text-white">
-                Trainer Applications
-              </h3>
+            <div className="mb-6 flex items-center justify-between">
+              <DocumentTextIcon className="h-8 w-8 text-[#D5FC51]" />
+              <span className="text-xs font-medium text-[#D9D9D9] uppercase tracking-wider">Applications</span>
             </div>
-            <p className="mb-4 text-gray-400">
+            <h3 className="text-2xl font-light text-[#2A2A2A] mb-3">Trainer Applications</h3>
+            <p className="text-[#D9D9D9] font-light leading-relaxed mb-6">
               Review and approve pending trainer applications.
             </p>
-            <div className="flex items-center text-[#D5FC51] transition-colors group-hover:text-white">
-              <span className="text-sm font-medium">View Applications →</span>
+            <div className="flex items-center text-[#D5FC51] group-hover:text-[#2A2A2A] transition-colors">
+              <span className="text-sm font-medium">Review →</span>
             </div>
           </Link>
 
           {/* User Management */}
           <Link
             href="/dashboard/users"
-            className="group rounded-2xl border border-gray-700 bg-gray-800/50 p-8 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-[#D5FC51]/50"
+            className="group rounded-3xl bg-[#FFFFFF] border border-[#D9D9D9]/20 p-10 transition-all duration-200 hover:border-[#D5FC51]/30 hover:shadow-sm"
           >
-            <div className="mb-4 flex items-center">
-              <UserIcon className="mr-3 h-8 w-8 text-[#D5FC51]" />
-              <h3 className="text-xl font-bold text-white">User Management</h3>
+            <div className="mb-6 flex items-center justify-between">
+              <UserIcon className="h-8 w-8 text-[#D5FC51]" />
+              <span className="text-xs font-medium text-[#D9D9D9] uppercase tracking-wider">Users</span>
             </div>
-            <p className="mb-4 text-gray-400">
+            <h3 className="text-2xl font-light text-[#2A2A2A] mb-3">User Management</h3>
+            <p className="text-[#D9D9D9] font-light leading-relaxed mb-6">
               Manage user accounts, roles, and permissions.
             </p>
-            <div className="flex items-center text-[#D5FC51] transition-colors group-hover:text-white">
-              <span className="text-sm font-medium">Manage Users →</span>
+            <div className="flex items-center text-[#D5FC51] group-hover:text-[#2A2A2A] transition-colors">
+              <span className="text-sm font-medium">Manage →</span>
+            </div>
+          </Link>
+
+          {/* Shop Management */}
+          <Link
+            href="/admin/shop"
+            className="group rounded-xl border border-gray-200 bg-white p-8 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-[#D5FC51]/50"
+          >
+            <div className="mb-4 flex items-center">
+              <ShoppingBagIcon className="mr-3 h-8 w-8 text-[#D5FC51]" />
+              <h3 className="text-xl font-bold text-[#2A2A2A]">Shop Management</h3>
+            </div>
+            <p className="mb-4 text-gray-600">
+              Manage products, categories, bundles, and coupons.
+            </p>
+            <div className="flex items-center text-[#D5FC51] transition-colors group-hover:text-[#2A2A2A]">
+              <span className="text-sm font-medium">Manage Shop →</span>
+            </div>
+          </Link>
+
+          {/* Order Bills */}
+          <Link
+            href="/admin/order-bills"
+            className="group rounded-xl border border-gray-200 bg-white p-8 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-[#D5FC51]/50"
+          >
+            <div className="mb-4 flex items-center">
+              <ReceiptPercentIcon className="mr-3 h-8 w-8 text-[#D5FC51]" />
+              <h3 className="text-xl font-bold text-[#2A2A2A]">Order Bills</h3>
+            </div>
+            <p className="mb-4 text-gray-600">
+              View and manage customer orders and billing.
+            </p>
+            <div className="flex items-center text-[#D5FC51] transition-colors group-hover:text-[#2A2A2A]">
+              <span className="text-sm font-medium">View Orders →</span>
             </div>
           </Link>
 
           {/* Reports */}
           <Link
             href="/dashboard/reports"
-            className="group rounded-2xl border border-gray-700 bg-gray-800/50 p-8 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-[#D5FC51]/50"
+            className="group rounded-xl border border-gray-200 bg-white p-8 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-[#D5FC51]/50"
           >
             <div className="mb-4 flex items-center">
               <ChartBarIcon className="mr-3 h-8 w-8 text-[#D5FC51]" />
-              <h3 className="text-xl font-bold text-white">
+              <h3 className="text-xl font-bold text-[#2A2A2A]">
                 Reports & Analytics
               </h3>
             </div>
-            <p className="mb-4 text-gray-400">
+            <p className="mb-4 text-gray-600">
               View platform analytics and generate reports.
             </p>
-            <div className="flex items-center text-[#D5FC51] transition-colors group-hover:text-white">
+            <div className="flex items-center text-[#D5FC51] transition-colors group-hover:text-[#2A2A2A]">
               <span className="text-sm font-medium">View Reports →</span>
             </div>
           </Link>
@@ -333,44 +375,51 @@ export default function Dashboard() {
           {/* Settings */}
           <Link
             href="/admin/platform-settings"
-            className="group rounded-2xl border border-gray-700 bg-gray-800/50 p-8 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-[#D5FC51]/50"
+            className="group rounded-xl border border-gray-200 bg-white p-8 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-[#D5FC51]/50"
           >
             <div className="mb-4 flex items-center">
               <CogIcon className="mr-3 h-8 w-8 text-[#D5FC51]" />
-              <h3 className="text-xl font-bold text-white">
+              <h3 className="text-xl font-bold text-[#2A2A2A]">
                 Platform Settings
               </h3>
             </div>
-            <p className="mb-4 text-gray-400">
+            <p className="mb-4 text-gray-600">
               Configure platform settings and preferences.
             </p>
-            <div className="flex items-center text-[#D5FC51] transition-colors group-hover:text-white">
+            <div className="flex items-center text-[#D5FC51] transition-colors group-hover:text-[#2A2A2A]">
               <span className="text-sm font-medium">Manage Settings →</span>
             </div>
           </Link>
 
+
           {/* Quick Actions */}
-          <div className="rounded-2xl border border-gray-700 bg-gray-800/50 p-8 backdrop-blur-sm">
+          <div className="rounded-xl border border-gray-200 bg-white p-8 shadow-lg">
             <div className="mb-4 flex items-center">
               <CheckCircleIcon className="mr-3 h-8 w-8 text-[#D5FC51]" />
-              <h3 className="text-xl font-bold text-white">Quick Actions</h3>
+              <h3 className="text-xl font-bold text-[#2A2A2A]">Quick Actions</h3>
             </div>
             <div className="space-y-3">
               <Link
                 href="/admin/trainer-applications"
-                className="block text-sm text-gray-400 transition-colors hover:text-[#D5FC51]"
+                className="block text-sm text-gray-600 transition-colors hover:text-[#D5FC51]"
               >
                 • Review pending applications
               </Link>
               <Link
-                href="/admin/manage-trainers"
-                className="block text-sm text-gray-400 transition-colors hover:text-[#D5FC51]"
+                href="/admin/shop/products"
+                className="block text-sm text-gray-600 transition-colors hover:text-[#D5FC51]"
               >
-                • Remove inactive trainers
+                • Add new products
+              </Link>
+              <Link
+                href="/admin/order-bills"
+                className="block text-sm text-gray-600 transition-colors hover:text-[#D5FC51]"
+              >
+                • Process pending orders
               </Link>
               <Link
                 href="/dashboard/users"
-                className="block text-sm text-gray-400 transition-colors hover:text-[#D5FC51]"
+                className="block text-sm text-gray-600 transition-colors hover:text-[#D5FC51]"
               >
                 • Update user roles
               </Link>
@@ -379,22 +428,24 @@ export default function Dashboard() {
         </div>
 
         {/* Real-time Activity & Insights */}
-        <div className="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <div className="mb-16 grid grid-cols-1 gap-12 lg:grid-cols-2">
           {/* Recent Notifications */}
           <div
             id="notifications-section"
-            className="rounded-2xl border border-gray-700 bg-gray-800/50 p-6 backdrop-blur-sm"
+            className="rounded-3xl bg-[#2A2A2A] p-10"
           >
-            <div className="mb-6 flex items-center justify-between">
-              <div className="flex items-center">
-                <BellIcon className="mr-3 h-6 w-6 text-[#D5FC51]" />
-                <h3 className="text-xl font-bold text-white">
+            <div className="mb-8 flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="rounded-full bg-[#D5FC51]/20 p-3">
+                  <BellIcon className="h-6 w-6 text-[#D5FC51]" />
+                </div>
+                <h3 className="text-2xl font-light text-[#FFFFFF]">
                   Recent Notifications
                 </h3>
               </div>
               <Link
                 href="/admin/notifications"
-                className="text-sm font-medium text-[#D5FC51] transition-colors hover:text-white"
+                className="cursor-pointer text-sm font-medium text-[#D5FC51] transition-colors hover:text-[#FFFFFF]"
               >
                 View All →
               </Link>
@@ -402,364 +453,138 @@ export default function Dashboard() {
             <div className="space-y-4">
               {notifications.length > 0 ? (
                 notifications.slice(0, 4).map((notification) => (
-                  <div
+                  <Link
                     key={notification.id}
-                    className="flex items-start space-x-3 rounded-xl bg-gray-700/30 p-3"
+                    href="/admin/notifications"
+                    className="flex items-start space-x-4 rounded-2xl bg-[#FFFFFF]/5 p-4 transition-all duration-200 hover:bg-[#FFFFFF]/10 cursor-pointer border border-[#FFFFFF]/10"
                   >
                     <div className="flex-shrink-0">
                       {notification.type === "trainer_application" && (
-                        <UserGroupIcon className="h-5 w-5 text-blue-400" />
+                        <UserGroupIcon className="h-5 w-5 text-blue-500" />
                       )}
                       {notification.type === "trainer_approved" && (
-                        <CheckCircleIcon className="h-5 w-5 text-green-400" />
+                        <CheckCircleIcon className="h-5 w-5 text-green-500" />
                       )}
                       {notification.type === "trainer_removed" && (
-                        <XCircleIcon className="h-5 w-5 text-red-400" />
+                        <XCircleIcon className="h-5 w-5 text-red-500" />
+                      )}
+                      {notification.type === "booking_confirmed" && (
+                        <CalendarDaysIcon className="h-5 w-5 text-[#D5FC51]" />
+                      )}
+                      {notification.type === "membership_purchased" && (
+                        <CreditCardIcon className="h-5 w-5 text-purple-500" />
+                      )}
+                      {notification.type === "system_alert" && (
+                        <ExclamationTriangleIcon className="h-5 w-5 text-orange-500" />
+                      )}
+                      {notification.type === "order_created" && (
+                        <ShoppingBagIcon className="h-5 w-5 text-blue-500" />
                       )}
                       {![
                         "trainer_application",
                         "trainer_approved",
                         "trainer_removed",
+                        "booking_confirmed",
+                        "membership_purchased",
+                        "system_alert",
+                        "order_created"
                       ].includes(notification.type) && (
                         <BellIcon className="h-5 w-5 text-[#D5FC51]" />
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-white">
-                        {notification.title}
-                      </p>
-                      <p className="mt-1 line-clamp-2 text-xs text-gray-400">
+                      <div className="flex items-center justify-between">
+                        <p className="truncate text-sm font-medium text-[#FFFFFF]">
+                          {notification.title}
+                        </p>
+                        {!notification.isRead && (
+                          <span className="ml-2 h-2 w-2 rounded-full bg-[#D5FC51]"></span>
+                        )}
+                      </div>
+                      <p className="mt-2 line-clamp-2 text-sm text-[#D9D9D9] font-light">
                         {notification.message}
                       </p>
-                      <p className="mt-1 text-xs text-gray-500">
+                      <p className="mt-2 text-xs text-[#D9D9D9]/70 font-light">
                         {new Date(notification.createdAt).toLocaleDateString()}
                       </p>
                     </div>
-                  </div>
+                  </Link>
                 ))
               ) : (
-                <div className="py-8 text-center">
-                  <BellIcon className="mx-auto mb-3 h-12 w-12 text-gray-600" />
-                  <p className="text-gray-400">No recent notifications</p>
+                <div className="py-12 text-center">
+                  <div className="rounded-full bg-[#D9D9D9]/10 p-6 mx-auto w-fit mb-4">
+                    <BellIcon className="h-8 w-8 text-[#D9D9D9]/50" />
+                  </div>
+                  <p className="text-[#D9D9D9] font-light">No recent notifications</p>
                 </div>
               )}
             </div>
           </div>
 
           {/* Monthly Statistics */}
-          <div className="rounded-2xl border border-gray-700 bg-gray-800/50 p-6 backdrop-blur-sm">
-            <div className="mb-6 flex items-center">
-              <ArrowTrendingUpIcon className="mr-3 h-6 w-6 text-[#D5FC51]" />
-              <h3 className="text-xl font-bold text-white">Monthly Growth</h3>
+          <div className="rounded-3xl bg-[#FFFFFF] p-10">
+            <div className="mb-8 flex items-center space-x-4">
+              <div className="rounded-full bg-[#D5FC51]/20 p-3">
+                <ArrowTrendingUpIcon className="h-6 w-6 text-[#D5FC51]" />
+              </div>
+              <h3 className="text-2xl font-light text-[#2A2A2A]">Monthly Growth</h3>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="rounded-xl bg-gray-700/30 p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-400">New Users</p>
-                    <p className="text-2xl font-bold text-white">
-                      {activity.monthlyStats.newUsers}
-                    </p>
-                  </div>
-                  <UserIcon className="h-8 w-8 text-blue-400" />
+            <div className="grid grid-cols-2 gap-6">
+              <div className="rounded-2xl bg-[#FFFFFF] border border-[#D9D9D9]/20 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <UserIcon className="h-6 w-6 text-[#D9D9D9]" />
+                  <span className="text-xs font-medium text-[#D9D9D9] uppercase tracking-wider">Users</span>
                 </div>
-                <p className="mt-2 text-xs text-gray-500">Last 30 days</p>
+                <div>
+                  <p className="text-3xl font-light text-[#2A2A2A] mb-1">
+                    {activity.monthlyStats.newUsers}
+                  </p>
+                  <p className="text-sm text-[#D9D9D9] font-light">Last 30 days</p>
+                </div>
               </div>
-              <div className="rounded-xl bg-gray-700/30 p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-400">New Trainers</p>
-                    <p className="text-2xl font-bold text-white">
-                      {activity.monthlyStats.newTrainers}
-                    </p>
-                  </div>
-                  <UserGroupIcon className="h-8 w-8 text-green-400" />
+              <div className="rounded-2xl bg-[#FFFFFF] border border-[#D9D9D9]/20 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <UserGroupIcon className="h-6 w-6 text-[#D9D9D9]" />
+                  <span className="text-xs font-medium text-[#D9D9D9] uppercase tracking-wider">Trainers</span>
                 </div>
-                <p className="mt-2 text-xs text-gray-500">Last 30 days</p>
+                <div>
+                  <p className="text-3xl font-light text-[#2A2A2A] mb-1">
+                    {activity.monthlyStats.newTrainers}
+                  </p>
+                  <p className="text-sm text-[#D9D9D9] font-light">Last 30 days</p>
+                </div>
               </div>
-              <div className="rounded-xl bg-gray-700/30 p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-400">Memberships</p>
-                    <p className="text-2xl font-bold text-white">
-                      {activity.monthlyStats.newMemberships}
-                    </p>
-                  </div>
-                  <CreditCardIcon className="h-8 w-8 text-[#D5FC51]" />
+              <div className="rounded-2xl bg-[#D5FC51]/5 border border-[#D5FC51]/20 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <CreditCardIcon className="h-6 w-6 text-[#D5FC51]" />
+                  <span className="text-xs font-medium text-[#D5FC51] uppercase tracking-wider">Memberships</span>
                 </div>
-                <p className="mt-2 text-xs text-gray-500">Last 30 days</p>
+                <div>
+                  <p className="text-3xl font-light text-[#2A2A2A] mb-1">
+                    {activity.monthlyStats.newMemberships}
+                  </p>
+                  <p className="text-sm text-[#D5FC51]/70 font-light">Last 30 days</p>
+                </div>
               </div>
-              <div className="rounded-xl bg-gray-700/30 p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-400">Pending</p>
-                    <p className="text-2xl font-bold text-white">
-                      {activity.monthlyStats.pendingApplications}
-                    </p>
-                  </div>
-                  <ClockIcon className="h-8 w-8 text-yellow-400" />
+              <div className="rounded-2xl bg-[#FFFFFF] border border-[#D9D9D9]/20 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <ClockIcon className="h-6 w-6 text-[#D9D9D9]" />
+                  <span className="text-xs font-medium text-[#D9D9D9] uppercase tracking-wider">Pending</span>
                 </div>
-                <p className="mt-2 text-xs text-gray-500">Applications</p>
+                <div>
+                  <p className="text-3xl font-light text-[#2A2A2A] mb-1">
+                    {activity.monthlyStats.pendingApplications}
+                  </p>
+                  <p className="text-sm text-[#D9D9D9] font-light">Applications</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Recent Activity Sections */}
-        <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {/* Recent Users */}
-          <div className="rounded-2xl border border-gray-700 bg-gray-800/50 p-6 backdrop-blur-sm">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <UserIcon className="mr-2 h-5 w-5 text-[#D5FC51]" />
-                <h4 className="text-lg font-bold text-white">New Users</h4>
-              </div>
-              <Link
-                href="/dashboard/users"
-                className="text-sm text-[#D5FC51] hover:text-white"
-              >
-                View All →
-              </Link>
-            </div>
-            <div className="space-y-3">
-              {activity.recentUsers.slice(0, 3).map((user) => (
-                <div
-                  key={user.id}
-                  className="flex items-center space-x-3 rounded-lg bg-gray-700/20 p-2"
-                >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#D5FC51]/20">
-                    <UserIcon className="h-4 w-4 text-[#D5FC51]" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-white">
-                      {user.name || "Unknown"}
-                    </p>
-                    <p className="truncate text-xs text-gray-400">
-                      {user.email}
-                    </p>
-                  </div>
-                  <span
-                    className={`rounded-full px-2 py-1 text-xs ${
-                      user.role === "ADMIN"
-                        ? "bg-red-500/20 text-red-400"
-                        : user.role === "TRAINER"
-                          ? "bg-green-500/20 text-green-400"
-                          : "bg-blue-500/20 text-blue-400"
-                    }`}
-                  >
-                    {user.role}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+        
 
-          {/* Recent Applications */}
-          <div className="rounded-2xl border border-gray-700 bg-gray-800/50 p-6 backdrop-blur-sm">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <DocumentTextIcon className="mr-2 h-5 w-5 text-[#D5FC51]" />
-                <h4 className="text-lg font-bold text-white">
-                  Trainer Applications
-                </h4>
-              </div>
-              <Link
-                href="/admin/trainer-applications"
-                className="text-sm text-[#D5FC51] hover:text-white"
-              >
-                View All →
-              </Link>
-            </div>
-            <div className="space-y-3">
-              {activity.recentApplications.slice(0, 3).map((application) => (
-                <div
-                  key={application.id}
-                  className="flex items-center space-x-3 rounded-lg bg-gray-700/20 p-2"
-                >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/20">
-                    <UserGroupIcon className="h-4 w-4 text-blue-400" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-white">
-                      {application.name}
-                    </p>
-                    <p className="truncate text-xs text-gray-400">
-                      {application.category}
-                    </p>
-                  </div>
-                  <span
-                    className={`rounded-full px-2 py-1 text-xs ${
-                      application.status === "PENDING"
-                        ? "bg-yellow-500/20 text-yellow-400"
-                        : application.status === "APPROVED"
-                          ? "bg-green-500/20 text-green-400"
-                          : "bg-red-500/20 text-red-400"
-                    }`}
-                  >
-                    {application.status}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
 
-          {/* Recent Memberships */}
-          <div className="rounded-2xl border border-gray-700 bg-gray-800/50 p-6 backdrop-blur-sm">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <CreditCardIcon className="mr-2 h-5 w-5 text-[#D5FC51]" />
-                <h4 className="text-lg font-bold text-white">
-                  Recent Memberships
-                </h4>
-              </div>
-              <Link
-                href="/dashboard/memberships"
-                className="text-sm text-[#D5FC51] hover:text-white"
-              >
-                View All →
-              </Link>
-            </div>
-            <div className="space-y-3">
-              {activity.recentMemberships.slice(0, 3).map((membership) => (
-                <div
-                  key={membership.id}
-                  className="flex items-center space-x-3 rounded-lg bg-gray-700/20 p-2"
-                >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#D5FC51]/20">
-                    <CreditCardIcon className="h-4 w-4 text-[#D5FC51]" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-white">
-                      {membership.name}
-                    </p>
-                    <p className="truncate text-xs text-gray-400">
-                      {membership.membershipType}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs text-gray-400">
-                      {new Date(membership.endDate).toLocaleDateString()}
-                    </p>
-                    <span
-                      className={`rounded-full px-2 py-1 text-xs ${
-                        new Date(membership.endDate) > new Date()
-                          ? "bg-green-500/20 text-green-400"
-                          : "bg-red-500/20 text-red-400"
-                      }`}
-                    >
-                      {new Date(membership.endDate) > new Date()
-                        ? "Active"
-                        : "Expired"}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* System Status & Quick Links */}
-        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {/* System Health */}
-          <div className="rounded-2xl border border-gray-700 bg-gray-800/50 p-6 backdrop-blur-sm">
-            <div className="mb-4 flex items-center">
-              <ShieldCheckIcon className="mr-3 h-6 w-6 text-green-400" />
-              <h4 className="text-lg font-bold text-white">System Health</h4>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-400">Database</span>
-                <span className="text-sm text-green-400">Online</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-400">API</span>
-                <span className="text-sm text-green-400">Healthy</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-400">Storage</span>
-                <span className="text-sm text-[#D5FC51]">85% Used</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="rounded-2xl border border-gray-700 bg-gray-800/50 p-6 backdrop-blur-sm">
-            <div className="mb-4 flex items-center">
-              <CogIcon className="mr-3 h-6 w-6 text-[#D5FC51]" />
-              <h4 className="text-lg font-bold text-white">Quick Actions</h4>
-            </div>
-            <div className="space-y-2">
-              <Link
-                href="/admin/backup"
-                className="block text-sm text-gray-400 transition-colors hover:text-[#D5FC51]"
-              >
-                • Create Backup
-              </Link>
-              <Link
-                href="/admin/maintenance"
-                className="block text-sm text-gray-400 transition-colors hover:text-[#D5FC51]"
-              >
-                • Maintenance Mode
-              </Link>
-              <Link
-                href="/admin/logs"
-                className="block text-sm text-gray-400 transition-colors hover:text-[#D5FC51]"
-              >
-                • View System Logs
-              </Link>
-            </div>
-          </div>
-
-          {/* Platform Info */}
-          <div className="rounded-2xl border border-gray-700 bg-gray-800/50 p-6 backdrop-blur-sm">
-            <div className="mb-4 flex items-center">
-              <CalendarDaysIcon className="mr-3 h-6 w-6 text-blue-400" />
-              <h4 className="text-lg font-bold text-white">Platform Info</h4>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-400">Version</span>
-                <span className="text-sm text-white">v2.1.0</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-400">Uptime</span>
-                <span className="text-sm text-green-400">99.9%</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-400">Last Update</span>
-                <span className="text-sm text-gray-300">2 days ago</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Support */}
-          <div className="rounded-2xl border border-gray-700 bg-gray-800/50 p-6 backdrop-blur-sm">
-            <div className="mb-4 flex items-center">
-              <ExclamationTriangleIcon className="mr-3 h-6 w-6 text-yellow-400" />
-              <h4 className="text-lg font-bold text-white">Support</h4>
-            </div>
-            <div className="space-y-2">
-              <Link
-                href="/admin/help"
-                className="block text-sm text-gray-400 transition-colors hover:text-[#D5FC51]"
-              >
-                • Documentation
-              </Link>
-              <Link
-                href="/admin/contact"
-                className="block text-sm text-gray-400 transition-colors hover:text-[#D5FC51]"
-              >
-                • Contact Support
-              </Link>
-              <Link
-                href="/admin/feedback"
-                className="block text-sm text-gray-400 transition-colors hover:text-[#D5FC51]"
-              >
-                • Send Feedback
-              </Link>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

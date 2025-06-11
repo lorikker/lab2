@@ -42,7 +42,7 @@ export default function MembershipLayout({
   return (
     <main className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative flex min-h-[60vh] items-center justify-center bg-[#2A2A2A] text-white">
+      <section className="relative flex min-h-[60vh] items-center justify-center bg-[#2A2A2A] text-white pt-20">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
           style={{

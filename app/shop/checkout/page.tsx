@@ -32,7 +32,7 @@ export default async function CheckoutPage() {
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <CheckoutForm cart={cart} />
+            <CheckoutForm cart={cart} userId={session.user.id} />
           </div>
           <div>
             <OrderSummary cart={cart} />
