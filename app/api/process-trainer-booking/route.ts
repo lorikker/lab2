@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { PrismaClient } from '@prisma/client';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
-});
+const stripe = new Stripe('sk_test_51RRbsi4Dw9UtbL2H6bvWDoSP4XMyReiX09oTOH67ZAMGl2iCSvgtrbXuc9BETb8HbxKMVBsdPuHGdWGwaSYFmeBM00dSFtNmJ3');
 
 const prisma = new PrismaClient();
 
@@ -60,9 +58,9 @@ export async function POST(request: NextRequest) {
       data: {
         id: crypto.randomUUID(),
         userId: userId || 'guest-user',
-        trainerId: parseInt(trainerId),
-        trainerName: trainerName,
-        sessionType: sessionType,
+        trainerId: trainerId || '',
+        trainerName: trainerName || '',
+        sessionType: sessionType || '',
         bookingDate: date,
         bookingTime: time,
         amount: amount,

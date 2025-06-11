@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
+import { useWebSocket } from "@/hooks/useWebSocket";
 import {
   BellIcon,
   CheckIcon,
@@ -261,14 +262,20 @@ export default function NotificationDropdown() {
     return `${Math.floor(diffInSeconds / 86400)}d ago`;
   };
 
+  // WebSocket connection for real-time notifications
+  const { isConnected } = useWebSocket({
+    onNotification: (newNotification) => {
+      console.log("Received real-time notification:", newNotification);
+      setNotifications((prev) => [newNotification, ...prev]);
+      setUnreadCount((prev) => prev + 1);
+    },
+  });
+
   // Fetch notifications on component mount and when session changes
   useEffect(() => {
     if (session?.user) {
       fetchNotifications();
-
-      // Set up polling for new notifications every 30 seconds
-      const interval = setInterval(fetchNotifications, 30000);
-      return () => clearInterval(interval);
+      // No more polling - WebSocket handles real-time updates!
     }
   }, [session]);
 

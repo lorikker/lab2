@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -206,8 +206,42 @@ export default function BookTrainerPage() {
   const [selectedTime, setSelectedTime] = useState("");
   const [sessionType, setSessionType] = useState("single");
   const [isBooked, setIsBooked] = useState(false);
+  const [trainer, setTrainer] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const trainer = trainersData[trainerId as keyof typeof trainersData];
+  useEffect(() => {
+    const fetchTrainer = async () => {
+      try {
+        const response = await fetch("/api/trainers");
+        if (response.ok) {
+          const data = await response.json();
+          const foundTrainer = data.trainers.find(
+            (t: any) => t.id === trainerId,
+          );
+          setTrainer(foundTrainer || null);
+        }
+      } catch (error) {
+        console.error("Error fetching trainer:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (trainerId) {
+      fetchTrainer();
+    }
+  }, [trainerId]);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#2A2A2A] via-gray-800 to-gray-900">
+        <div className="text-center">
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-[#D5FC51]"></div>
+          <p className="text-gray-400">Loading trainer...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!trainer) {
     return (
@@ -295,7 +329,7 @@ export default function BookTrainerPage() {
           {/* Trainer Info */}
           <div className="overflow-hidden rounded-2xl bg-gray-800/50 shadow-xl backdrop-blur-sm">
             <img
-              src={trainer.image}
+              src={trainer.photoUrl || "/default-trainer.jpg"}
               alt={trainer.name}
               className="h-80 w-full object-cover"
             />
@@ -333,15 +367,10 @@ export default function BookTrainerPage() {
                   Qualifications
                 </h3>
                 <div className="space-y-2">
-                  {trainer.qualifications.map((qual, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center text-gray-300"
-                    >
-                      <CheckCircleIcon className="mr-2 h-4 w-4 text-green-400" />
-                      <span>{qual}</span>
-                    </div>
-                  ))}
+                  <div className="flex items-center text-gray-300">
+                    <CheckCircleIcon className="mr-2 h-4 w-4 text-green-400" />
+                    <span>{trainer.qualifications}</span>
+                  </div>
                 </div>
               </div>
 
@@ -350,11 +379,9 @@ export default function BookTrainerPage() {
                   Availability
                 </h3>
                 <div className="space-y-2">
-                  {trainer.availability.map((time, index) => (
-                    <div key={index} className="text-sm text-gray-300">
-                      {time}
-                    </div>
-                  ))}
+                  <div className="text-sm text-gray-300">
+                    {trainer.availability}
+                  </div>
                 </div>
               </div>
             </div>

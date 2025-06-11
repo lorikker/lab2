@@ -319,7 +319,7 @@ model PaidMemberships {
 model TrainerBookings {
   id              String    @id @default(uuid())
   userId          String
-  trainerId       Int
+  trainerId       String
   trainerName     String
   sessionType     String    // "single", "package"
   bookingDate     String
@@ -346,7 +346,7 @@ model TrainerApplications {
   email           String
   phone           String?
   category        String    // "diet", "online", "physical", "programs"
-  specialty       String?    
+  specialty       String?
   experience      String    // "5 years", "7 years", etc.
   price           String    // "$80/session", "$90/session", etc.
   description     String
