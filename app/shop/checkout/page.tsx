@@ -12,24 +12,24 @@ export const metadata: Metadata = {
 
 export default async function CheckoutPage() {
   const session = await auth();
-  
+
   // Redirect to login if not authenticated
   if (!session) {
     redirect("/login?callbackUrl=/shop/checkout");
   }
-  
+
   const cart = await fetchUserCart();
-  
+
   // Redirect to cart if cart is empty
   if (!cart || cart.items.length === 0) {
     redirect("/shop/cart");
   }
-  
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start bg-white pt-24 font-sans">
-      <div className="container mx-auto px-4 py-8">
+    <main className="flex min-h-screen flex-col items-center justify-start bg-white pt-14 pb-14 font-sans">
+      <div className="container mx-auto">
         <h1 className="mb-8 text-3xl font-bold text-[#2A2A2A]">Checkout</h1>
-        
+
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <CheckoutForm cart={cart} />
