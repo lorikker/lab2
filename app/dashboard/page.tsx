@@ -67,20 +67,20 @@ export default async function DashboardPage() {
           </p>
         </Link>
 
-        {/* Shop Management Card - For admins only */}
+        {/* Admin Dashboard Card - For admins only */}
         {session?.user?.role === "ADMIN" && (
           <Link
-            href="/dashboard/shop"
+            href="/admin"
             className="rounded-md bg-white p-6 shadow transition-all hover:shadow-md"
           >
             <div className="flex items-center gap-2">
               <ShoppingBagIcon className="h-6 w-6 text-[#D5FC51]" />
               <h2 className="text-xl font-medium text-gray-900">
-                Shop Management
+                Admin Dashboard
               </h2>
             </div>
             <p className="mt-2 text-sm text-gray-600">
-              Manage products, orders, and shop settings.
+              Access admin features, shop management, and order bills.
             </p>
           </Link>
         )}

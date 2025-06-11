@@ -62,10 +62,10 @@ export default function AdminLayout({
 
   if (isLoading || status === "loading") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#2A2A2A] via-gray-800 to-gray-900">
+      <div className="flex min-h-screen items-center justify-center bg-white">
         <div className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-[#D5FC51]"></div>
-          <p className="text-gray-400">Checking dashboard access...</p>
+          <p className="text-gray-600">Checking dashboard access...</p>
         </div>
       </div>
     );
@@ -73,10 +73,10 @@ export default function AdminLayout({
 
   if (!isAuthorized) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#2A2A2A] via-gray-800 to-gray-900">
+      <div className="flex min-h-screen items-center justify-center bg-white">
         <div className="text-center">
-          <h1 className="mb-4 text-2xl font-bold text-white">Access Denied</h1>
-          <p className="text-gray-400">
+          <h1 className="mb-4 text-2xl font-bold text-[#2A2A2A]">Access Denied</h1>
+          <p className="text-gray-600">
             You don't have permission to access this area.
           </p>
         </div>

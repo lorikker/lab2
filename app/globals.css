@@ -18,7 +18,7 @@
 
 @layer base {
   body {
-    @apply bg-white pt-16 text-[#2A2A2A];
+    @apply bg-white text-[#2A2A2A];
     font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   }
 

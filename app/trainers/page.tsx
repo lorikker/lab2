@@ -254,7 +254,7 @@ export default function TrainersPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#2A2A2A] via-[#2A2A2A] to-gray-800 pt-20">
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#2A2A2A] via-[#2A2A2A] to-gray-800 pt-32">
         <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent"></div>
         <div className="relative container mx-auto px-4 py-20">
           <div className="mx-auto max-w-5xl text-center">
