@@ -5,32 +5,56 @@ import { db } from "@/db";
 // Use the singleton Prisma client
 const prisma = db;
 
-// Helper function to calculate average rating and review count
+// Helper function to add review data to products
 async function addReviewData(products: any[]): Promise<Product[]> {
-  const productsWithReviews = await Promise.all(
-    products.map(async (product) => {
-      const reviews = await prisma.review.findMany({
-        where: { productId: product.id },
-        select: { rating: true },
-      });
+  try {
+    // Connect to MongoDB
+    const { MongoClient } = require("mongodb");
+    const client = new MongoClient(process.env.MONGODB_URI as string);
+    await client.connect();
 
-      const averageRating =
-        reviews.length > 0
-          ? reviews.reduce((sum, review) => sum + review.rating, 0) /
-            reviews.length
-          : 0;
+    const db = client.db("lab2");
 
-      return {
-        ...product,
-        price: Number(product.price),
-        salePrice: product.salePrice ? Number(product.salePrice) : null,
-        averageRating: Math.round(averageRating * 10) / 10, // Round to 1 decimal place
-        reviewCount: reviews.length,
-      };
-    }),
-  );
+    // Process each product
+    const productsWithReviews = await Promise.all(
+      products.map(async (product) => {
+        // Get review stats from MongoDB
+        const reviews = await db
+          .collection("reviews")
+          .find({ productId: product.id })
+          .toArray();
 
-  return productsWithReviews;
+        const averageRating =
+          reviews.length > 0
+            ? reviews.reduce(
+                (sum: number, review: any) => sum + review.rating,
+                0,
+              ) / reviews.length
+            : 0;
+
+        // Convert Decimal objects to numbers
+        return {
+          ...product,
+          price: Number(product.price),
+          salePrice: product.salePrice ? Number(product.salePrice) : null,
+          averageRating: Math.round(averageRating * 10) / 10, // Round to 1 decimal
+          reviewCount: reviews.length,
+        };
+      }),
+    );
+
+    await client.close();
+    return productsWithReviews;
+  } catch (error) {
+    console.error("Error adding review data:", error);
+
+    // If there's an error, just convert Decimal objects to numbers without review data
+    return products.map((product) => ({
+      ...product,
+      price: Number(product.price),
+      salePrice: product.salePrice ? Number(product.salePrice) : null,
+    }));
+  }
 }
 
 // For testing purposes, we'll use a mock database with some sample data
@@ -332,16 +356,21 @@ export async function fetchProductReviews(
   productId: string,
 ): Promise<Review[]> {
   try {
-    // Use the database to fetch product reviews
-    return await prisma.review.findMany({
-      where: { productId },
-      include: {
-        user: {
-          select: { id: true, name: true, image: true },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    // Connect to MongoDB
+    const { MongoClient } = require("mongodb");
+    const client = new MongoClient(process.env.MONGODB_URI as string);
+    await client.connect();
+
+    const db = client.db("lab2");
+    const reviews = await db
+      .collection("reviews")
+      .find({ productId })
+      .sort({ createdAt: -1 })
+      .toArray();
+
+    await client.close();
+
+    return reviews;
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch product reviews.");
