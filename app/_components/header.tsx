@@ -32,11 +32,22 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 export default function Header() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [userRole, setUserRole] = useState<string>("USER");
-  const [isLoadingRole, setIsLoadingRole] = useState(true);
+
+  // Get user role directly from session instead of fetching separately
+  const userRole = session?.user?.role || "USER";
+  const isLoadingRole = status === "loading";
+
+  // Debug logging (remove in production)
+  useEffect(() => {
+    console.log("Header session state:", {
+      status,
+      userRole,
+      sessionExists: !!session,
+    });
+  }, [status, userRole, session]);
 
   // Add scroll event listener to change header style on scroll
   useEffect(() => {
@@ -69,35 +80,7 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [mobileMenuOpen]);
 
-  // Fetch user role from database
-  useEffect(() => {
-    const fetchUserRole = async () => {
-      if (session?.user?.email) {
-        try {
-          const response = await fetch(`/api/user?email=${session.user.email}`);
-          if (response.ok) {
-            const data = await response.json();
-            setUserRole(data.user?.role || "USER");
-          } else {
-            // Handle cases where the API call is not OK, e.g., user not found
-            console.error("Failed to fetch user role:", response.statusText);
-            setUserRole("USER");
-          }
-        } catch (error) {
-          console.error("Error fetching user role:", error);
-          setUserRole("USER"); // Default to USER on error
-        }
-      } else {
-        setUserRole("USER"); // Default to USER if no session or email
-      }
-      setIsLoadingRole(false);
-    };
-
-    if (session !== undefined) {
-      // Fetch role only when session data is loaded (can be null)
-      fetchUserRole();
-    }
-  }, [session]); // Depend on session to re-fetch if session changes
+  // No need to fetch user role separately - it's already in the session
 
   // Toggle mobile menu
   const toggleMobileMenu = () => {

@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
 
       // Create notification for each admin
       for (const admin of adminUsers) {
-        await db.notifications.create({
+        const notification = await db.notifications.create({
           data: {
             userId: admin.email, // Use admin email as userId
             type: 'trainer_application',
@@ -106,6 +106,22 @@ export async function POST(request: NextRequest) {
             isRead: false
           }
         });
+
+        // Emit real-time notification via WebSocket
+        try {
+          await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3001'}/api/socket`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'notification',
+              userId: admin.email,
+              data: notification
+            })
+          });
+        } catch (wsError) {
+          console.error('WebSocket notification failed:', wsError);
+          // Continue execution even if WebSocket fails
+        }
       }
 
       console.log(`Created notifications for ${adminUsers.length} admins`);

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useWebSocket } from "@/hooks/useWebSocket";
 import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 import CartItemList from "@/app/_components/shop/cart-item-list";
 import CartSummary from "@/app/_components/shop/cart-summary";
@@ -24,28 +25,28 @@ export default function ClientCart() {
       setCart(cartData);
     } catch (err) {
       console.error("Error fetching cart:", err);
-      setError("Failed to load your cart. Please try again later.");
     } finally {
       setIsLoading(false);
     }
   };
 
+  const { emitCartUpdate } = useWebSocket({
+    onCartUpdate: (updatedCart) => {
+      console.log("Received real-time cart update:", updatedCart);
+      setCart(updatedCart);
+    },
+  });
+
   useEffect(() => {
     fetchCart();
-
-    // Listen for cart update events
     const handleCartUpdate = () => {
       fetchCart();
     };
 
     window.addEventListener("cartUpdated", handleCartUpdate);
 
-    // Set up a polling interval to refresh the cart every 30 seconds
-    const intervalId = setInterval(fetchCart, 30000);
-
     return () => {
       window.removeEventListener("cartUpdated", handleCartUpdate);
-      clearInterval(intervalId);
     };
   }, []);
 
