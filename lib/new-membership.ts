@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { db } from '@/db';
 
 export type MembershipType = 'basic' | 'premium' | 'elite';
 export type MembershipStatus = 'active' | 'expired' | 'cancelled' | 'suspended';
@@ -91,7 +89,7 @@ export async function createNewMembership(data: {
   const orderNumber = generateOrderNumber();
 
   // Check if user has an existing active membership
-  const existingMembership = await prisma.memberships.findFirst({
+  const existingMembership = await db.memberships.findFirst({
     where: {
       userId: data.userId,
       status: 'active',
@@ -124,7 +122,7 @@ export async function createNewMembership(data: {
     const { daysActive, daysRemaining } = calculateMembershipDays(startDate, endDate);
 
     // Update existing membership
-    membership = await prisma.memberships.update({
+    membership = await db.memberships.update({
       where: { id: existingMembership.id },
       data: {
         endDate,
@@ -149,7 +147,7 @@ export async function createNewMembership(data: {
     const { daysActive, daysRemaining } = calculateMembershipDays(startDate, endDate);
 
     // Create new membership
-    membership = await prisma.memberships.create({
+    membership = await db.memberships.create({
       data: {
         userId: data.userId,
         name: data.userName,
@@ -171,7 +169,7 @@ export async function createNewMembership(data: {
   }
 
   // Always create a record in paidmemberships table (payment history)
-  const paidMembership = await prisma.paidMemberships.create({
+  const paidMembership = await db.paidMemberships.create({
     data: {
       userId: data.userId,
       name: data.userName,
@@ -198,7 +196,7 @@ export async function createNewMembership(data: {
 
 // Get user's active membership
 export async function getUserActiveMembership(userId: string) {
-  return await prisma.memberships.findFirst({
+  return await db.memberships.findFirst({
     where: {
       userId,
       status: 'active',
@@ -214,7 +212,7 @@ export async function getUserActiveMembership(userId: string) {
 
 // Get user's membership history
 export async function getUserMembershipHistory(userId: string) {
-  return await prisma.memberships.findMany({
+  return await db.memberships.findMany({
     where: { userId },
     orderBy: { createdAt: 'desc' },
     include: {
@@ -225,7 +223,7 @@ export async function getUserMembershipHistory(userId: string) {
 
 // Get user's payment history
 export async function getUserPaymentHistory(userId: string) {
-  return await prisma.paidMemberships.findMany({
+  return await db.paidMemberships.findMany({
     where: { userId },
     orderBy: { createdAt: 'desc' },
     include: {
@@ -236,7 +234,7 @@ export async function getUserPaymentHistory(userId: string) {
 
 // Update membership days (should be run daily)
 export async function updateAllMembershipDays() {
-  const activeMemberships = await prisma.memberships.findMany({
+  const activeMemberships = await db.memberships.findMany({
     where: {
       status: 'active',
     },
@@ -250,7 +248,7 @@ export async function updateAllMembershipDays() {
 
     const newStatus = daysRemaining <= 0 ? 'expired' : 'active';
 
-    await prisma.memberships.update({
+    await db.memberships.update({
       where: { id: membership.id },
       data: {
         daysActive,
@@ -263,7 +261,7 @@ export async function updateAllMembershipDays() {
 
 // Get payment by invoice number
 export async function getPaymentByInvoiceNumber(invoiceNumber: string) {
-  return await prisma.paidMemberships.findUnique({
+  return await db.paidMemberships.findUnique({
     where: { invoiceNumber },
     include: {
       user: true,

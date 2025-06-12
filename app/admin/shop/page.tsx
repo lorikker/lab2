@@ -56,13 +56,6 @@ export default async function ShopManagementPage() {
       color: "bg-amber-50 text-amber-700",
     },
     {
-      title: "Coupons",
-      description: "Create and manage discount coupons",
-      icon: <TicketIcon className="h-8 w-8" />,
-      href: "/admin/shop/coupons",
-      color: "bg-pink-50 text-pink-700",
-    },
-    {
       title: "Reports",
       description: "View sales reports and analytics",
       icon: <ChartBarIcon className="h-8 w-8" />,

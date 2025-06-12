@@ -151,6 +151,27 @@ export async function POST(request: NextRequest) {
       console.error('Error creating user notification:', notificationError);
     }
 
+    // Emit real-time notification for admin dashboard
+    try {
+      await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3001'}/api/socket`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'trainer-application',
+          data: {
+            id: application.id,
+            name: application.name,
+            category: application.category,
+            specialty: application.specialty
+          }
+        })
+      });
+      console.log('WebSocket notification sent for new trainer application');
+    } catch (wsError) {
+      console.error('WebSocket notification failed:', wsError);
+      // Continue execution even if WebSocket fails
+    }
+
     return NextResponse.json({
       success: true,
       applicationId: application.id,

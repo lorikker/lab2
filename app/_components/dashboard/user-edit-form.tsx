@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { updateUserInfo } from "@/app/lib/actions";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState, useFormStatus } from "react-dom";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 type User = {
@@ -28,7 +28,7 @@ function SubmitButton() {
 
 export default function UserEditForm({ user, onClose }: { user: User; onClose: () => void }) {
   const initialState = { message: null, errors: {}, success: false };
-  const [state, dispatch] = useFormState(updateUserInfo, initialState);
+  const [state, dispatch] = useActionState(updateUserInfo, initialState);
   const [name, setName] = useState(user.name || "");
   const [email, setEmail] = useState(user.email || "");
 
