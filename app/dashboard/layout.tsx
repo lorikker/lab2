@@ -12,9 +12,12 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <DashboardAccessGuard requiredRoles={["ADMIN", "TRAINER"]} requireAdminAccess={true}>
+    <DashboardAccessGuard
+      requiredRoles={["ADMIN", "TRAINER"]}
+      requireAdminAccess={true}
+    >
       <div className="flex min-h-screen flex-col">
-        <div className="flex flex-1 flex-col pt-16">{children}</div>
+        <div className="flex flex-1 flex-col">{children}</div>
       </div>
     </DashboardAccessGuard>
   );

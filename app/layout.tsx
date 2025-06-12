@@ -15,6 +15,11 @@ const ubuntu = Ubuntu({
 export const metadata: Metadata = {
   title: "SixStar Fitness",
   description: "Fitness App.",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -36,7 +41,7 @@ export default function RootLayout({
           <WebSocketProvider>
             <Header />
             <div className="flex min-h-screen flex-col">
-              <div className="flex-grow">{children}</div>
+              <div className="flex-grow pt-24">{children}</div>
               <Footer />
             </div>
           </WebSocketProvider>
