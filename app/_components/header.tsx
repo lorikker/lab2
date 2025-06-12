@@ -40,15 +40,6 @@ export default function Header() {
   const userRole = session?.user?.role || "USER";
   const isLoadingRole = status === "loading";
 
-  // Debug logging (remove in production)
-  useEffect(() => {
-    console.log("Header session state:", {
-      status,
-      userRole,
-      sessionExists: !!session,
-    });
-  }, [status, userRole, session]);
-
   // Add scroll event listener to change header style on scroll
   useEffect(() => {
     const handleScroll = () => {
@@ -117,7 +108,7 @@ export default function Header() {
   return (
     <header
       className={cn(
-        "fixed top-0 right-0 left-0 z-50 h-20 w-full shadow-lg",
+        "fixed left-0 right-0 top-0 z-50 h-20 w-full shadow-lg",
         scrolled
           ? "bg-[#2A2A2A]/95 backdrop-blur-sm"
           : "bg-[#2A2A2A]/80 backdrop-blur-sm",
@@ -127,7 +118,7 @@ export default function Header() {
         <div className="flex items-center">
           <Link
             href="/"
-            className="mr-8 text-2xl font-bold whitespace-nowrap text-[#D5FC51]"
+            className="mr-8 whitespace-nowrap text-2xl font-bold text-[#D5FC51]"
           >
             SixStar Fitness
           </Link>
@@ -140,7 +131,12 @@ export default function Header() {
             {session && userRole === "ADMIN"
               ? renderLink("/admin", CogIcon, "Admin Dashboard", ["ADMIN"])
               : session && userRole === "TRAINER"
-                ? renderLink("/admin/manage-trainers", CalendarIcon, "My Schedule", ["TRAINER"])
+                ? renderLink(
+                    "/admin/manage-trainers",
+                    CalendarIcon,
+                    "My Schedule",
+                    ["TRAINER"],
+                  )
                 : null}
             {renderLink("/trainers", UserGroupIcon, "Trainers", [])}{" "}
             {/* Always visible */}
@@ -177,7 +173,7 @@ export default function Header() {
       {mobileMenuOpen && (
         <div
           id="mobile-menu"
-          className="absolute top-full left-0 w-full bg-[#2A2A2A]/95 px-4 py-2 shadow-lg backdrop-blur-sm md:hidden"
+          className="absolute left-0 top-full w-full bg-[#2A2A2A]/95 px-4 py-2 shadow-lg backdrop-blur-sm md:hidden"
         >
           <div className="flex flex-col space-y-1">
             {renderLink("/", HomeIcon, "Home", [], true)}
