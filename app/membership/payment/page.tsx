@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import {
   CreditCardIcon,
@@ -14,6 +15,7 @@ import StripeElementsForm from "@/app/_components/stripe-elements-form";
 export default function PaymentPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: session } = useSession();
   const plan = searchParams.get("plan") || "basic";
 
   const [formData, setFormData] = useState<any>(null);
@@ -145,9 +147,13 @@ export default function PaymentPage() {
           currency: 'usd',
           customerName: `${formData.firstName} ${formData.lastName}`,
           customerEmail: formData.email,
-          plan: planDetails.name
+          plan: planDetails.name,
+          userId: session?.user?.id || session?.user?.email || 'guest-user',
+          userName: session?.user?.name || `${formData.firstName} ${formData.lastName}`
         }),
       });
+
+      console.log('Payment intent request sent with userId:', session?.user?.id || session?.user?.email);
 
       if (!response.ok) {
         throw new Error('Error creating payment intent');
@@ -182,7 +188,7 @@ export default function PaymentPage() {
   };
 
   // Handle successful payment
-  const handlePaymentSuccess = (paymentIntentId: string) => {
+  const handlePaymentSuccess = async (paymentIntentId: string) => {
     console.log('Payment success callback with ID:', paymentIntentId);
     setIsSubmitting(false);
     setIsSuccess(true);
@@ -197,6 +203,35 @@ export default function PaymentPage() {
 
     // Set the invoice number in state
     setInvoiceNumber(newInvoiceNumber);
+
+    // Process membership manually since webhooks don't work in local development
+    try {
+      console.log('Processing membership manually...');
+      const processResponse = await fetch('/api/process-membership', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          paymentIntentId,
+          userId: session?.user?.id || session?.user?.email || 'guest-user',
+          userName: session?.user?.name || (formData ? `${formData.firstName} ${formData.lastName}` : 'Guest User'),
+          membershipType: planDetails?.name || 'basic',
+          amount: planDetails?.price || 0,
+          customerEmail: formData?.email || session?.user?.email,
+          billingInfo: formData
+        }),
+      });
+
+      if (processResponse.ok) {
+        const result = await processResponse.json();
+        console.log('Membership processed successfully:', result);
+      } else {
+        console.error('Failed to process membership:', await processResponse.text());
+      }
+    } catch (error) {
+      console.error('Error processing membership:', error);
+    }
 
     // Store invoice number and billing information in session storage for retrieval on invoice page
     if (typeof window !== 'undefined' && formData) {

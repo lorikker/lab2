@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
         console.log('Payment succeeded:', paymentIntent.id);
         
         // Extract metadata
-        const { plan, userId, invoiceNumber, orderNumber, customerName } = paymentIntent.metadata;
+        const { plan, userId, invoiceNumber, orderNumber, customerName, userName } = paymentIntent.metadata;
         
         if (!plan || !userId) {
           console.error('Missing required metadata in payment intent');
@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
           // Create membership and payment record
           const result = await createNewMembership({
             userId,
+            userName: userName || customerName || 'Guest User',
             membershipType: plan as MembershipType,
             price: paymentIntent.amount / 100, // Convert from cents
             currency: paymentIntent.currency.toUpperCase(),
@@ -49,7 +50,7 @@ export async function POST(req: NextRequest) {
             paymentIntentId: paymentIntent.id,
             invoiceNumber,
             billingInfo: {
-              customerName,
+              customerName: userName || customerName,
               email: paymentIntent.receipt_email,
               paymentIntentId: paymentIntent.id,
             },

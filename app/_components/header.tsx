@@ -125,23 +125,20 @@ export default function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden items-center space-x-1 md:flex">
             {renderLink("/", HomeIcon, "Home", [])} {/* Always visible */}
-            {renderLink("/about", InformationCircleIcon, "About", [])}{" "}
-            {/* Always visible */}
+            {renderLink("/about", InformationCircleIcon, "About", [])}
             {/* Dashboard: Show only for ADMIN and TRAINER */}
             {session && userRole === "ADMIN"
               ? renderLink("/admin", CogIcon, "Admin Dashboard", ["ADMIN"])
               : session && userRole === "TRAINER"
                 ? renderLink(
-                    "/admin/manage-trainers",
+                    "/manage-trainers",
                     CalendarIcon,
                     "My Schedule",
                     ["TRAINER"],
                   )
                 : null}
-            {renderLink("/trainers", UserGroupIcon, "Trainers", [])}{" "}
-            {/* Always visible */}
-            {renderLink("/shop", ShoppingBagIcon, "Shop", [])}{" "}
-            {/* Always visible */}
+            {renderLink("/trainers", UserGroupIcon, "Trainers", [])}
+            {renderLink("/shop", ShoppingBagIcon, "Shop", [])}
           </nav>
         </div>
 
@@ -189,7 +186,7 @@ export default function Header() {
                 )
               : session && userRole === "TRAINER"
                 ? renderLink(
-                    "/admin/manage-trainers",
+                    "/manage-trainers",
                     CalendarIcon,
                     "My Schedule",
                     ["TRAINER"],
@@ -198,8 +195,7 @@ export default function Header() {
                 : null}
             {renderLink("/trainers", UserGroupIcon, "Trainers", [], true)}
             {renderLink("/shop", ShoppingBagIcon, "Shop", [], true)}
-            {renderLink("/shop/cart", ShoppingBagIcon, "Cart", [], true)}{" "}
-            {/* Cart has its own mobile link */}
+            {renderLink("/shop/cart", ShoppingBagIcon, "Cart", [], true)}
             {renderLink("/account", UserCircleIcon, "My Account", [], true)}
             {renderLink("/settings", Cog6ToothIcon, "Settings", [], true)}
           </div>

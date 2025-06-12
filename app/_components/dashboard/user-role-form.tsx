@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { updateUserRole } from "@/app/lib/actions";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState, useFormStatus } from "react-dom";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 type User = {
@@ -28,7 +28,7 @@ function SubmitButton() {
 
 export default function UserRoleForm({ user }: { user: User }) {
   const initialState = { message: null, errors: {} };
-  const [state, dispatch] = useFormState(updateUserRole, initialState);
+  const [state, dispatch] = useActionState(updateUserRole, initialState);
   const [selectedRole, setSelectedRole] = useState(user.role);
   const [showSuccess, setShowSuccess] = useState(false);
 

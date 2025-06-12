@@ -173,18 +173,18 @@ export default function Dashboard() {
         <div className="mb-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           <Link
             href="/dashboard/users"
-            className="group cursor-pointer rounded-2xl bg-[#FFFFFF] border border-[#D9D9D9]/30 p-8 transition-all duration-200 hover:border-[#D5FC51]/50 hover:shadow-sm"
+            className="group cursor-pointer rounded-2xl bg-[#FFFFFF] border-2 border-[#D9D9D9]/50 p-8 transition-all duration-200 hover:border-[#D5FC51] hover:shadow-md"
           >
             <div className="flex flex-col space-y-4">
               <div className="flex items-center justify-between">
-                <UserIcon className="h-6 w-6 text-[#D9D9D9] group-hover:text-[#D5FC51] transition-colors" />
-                <span className="text-xs font-medium text-[#D9D9D9] uppercase tracking-wider">Users</span>
+                <UserIcon className="h-7 w-7 text-[#2A2A2A] group-hover:text-[#D5FC51] transition-colors" />
+                <span className="text-sm font-semibold text-[#2A2A2A] uppercase tracking-wider">Users</span>
               </div>
               <div>
-                <p className="text-3xl font-light text-[#2A2A2A] mb-1">
+                <p className="text-4xl font-medium text-[#2A2A2A] mb-1">
                   {stats.totalUsers}
                 </p>
-                <p className="text-sm text-[#D9D9D9] font-light">
+                <p className="text-sm text-[#2A2A2A] font-medium">
                   Total registered
                 </p>
               </div>
@@ -193,18 +193,18 @@ export default function Dashboard() {
 
           <Link
             href="/admin/manage-trainers"
-            className="group cursor-pointer rounded-2xl bg-[#FFFFFF] border border-[#D9D9D9]/30 p-8 transition-all duration-200 hover:border-[#D5FC51]/50 hover:shadow-sm"
+            className="group cursor-pointer rounded-2xl bg-[#FFFFFF] border-2 border-[#D9D9D9]/50 p-8 transition-all duration-200 hover:border-[#D5FC51] hover:shadow-md"
           >
             <div className="flex flex-col space-y-4">
               <div className="flex items-center justify-between">
-                <UserGroupIcon className="h-6 w-6 text-[#D9D9D9] group-hover:text-[#D5FC51] transition-colors" />
-                <span className="text-xs font-medium text-[#D9D9D9] uppercase tracking-wider">Trainers</span>
+                <UserGroupIcon className="h-7 w-7 text-[#2A2A2A] group-hover:text-[#D5FC51] transition-colors" />
+                <span className="text-sm font-semibold text-[#2A2A2A] uppercase tracking-wider">Trainers</span>
               </div>
               <div>
-                <p className="text-3xl font-light text-[#2A2A2A] mb-1">
+                <p className="text-4xl font-medium text-[#2A2A2A] mb-1">
                   {stats.totalTrainers}
                 </p>
-                <p className="text-sm text-[#D9D9D9] font-light">
+                <p className="text-sm text-[#2A2A2A] font-medium">
                   Active trainers
                 </p>
               </div>
@@ -213,18 +213,18 @@ export default function Dashboard() {
 
           <Link
             href="/admin/trainer-applications"
-            className="group cursor-pointer rounded-2xl bg-[#FFFFFF] border border-[#D9D9D9]/30 p-8 transition-all duration-200 hover:border-[#D5FC51]/50 hover:shadow-sm"
+            className="group cursor-pointer rounded-2xl bg-[#FFFFFF] border-2 border-[#D9D9D9]/50 p-8 transition-all duration-200 hover:border-[#D5FC51] hover:shadow-md"
           >
             <div className="flex flex-col space-y-4">
               <div className="flex items-center justify-between">
-                <ClockIcon className="h-6 w-6 text-[#D9D9D9] group-hover:text-[#D5FC51] transition-colors" />
-                <span className="text-xs font-medium text-[#D9D9D9] uppercase tracking-wider">Pending</span>
+                <ClockIcon className="h-7 w-7 text-[#2A2A2A] group-hover:text-[#D5FC51] transition-colors" />
+                <span className="text-sm font-semibold text-[#2A2A2A] uppercase tracking-wider">Pending</span>
               </div>
               <div>
-                <p className="text-3xl font-light text-[#2A2A2A] mb-1">
+                <p className="text-4xl font-medium text-[#2A2A2A] mb-1">
                   {stats.pendingApplications}
                 </p>
-                <p className="text-sm text-[#D9D9D9] font-light">
+                <p className="text-sm text-[#2A2A2A] font-medium">
                   Applications
                 </p>
               </div>
@@ -232,30 +232,19 @@ export default function Dashboard() {
           </Link>
 
           <button
-            onClick={() => {
-              // Scroll to notifications section
-              const notificationsSection = document.getElementById(
-                "notifications-section",
-              );
-              if (notificationsSection) {
-                notificationsSection.scrollIntoView({
-                  behavior: "smooth",
-                  block: "start",
-                });
-              }
-            }}
-            className="group cursor-pointer rounded-2xl bg-[#FFFFFF] border border-[#D9D9D9]/30 p-8 text-left transition-all duration-200 hover:border-[#D5FC51]/50 hover:shadow-sm"
+            onClick={() => router.push("/admin/notifications")}
+            className="group cursor-pointer rounded-2xl bg-[#FFFFFF] border-2 border-[#D9D9D9]/50 p-8 text-left transition-all duration-200 hover:border-[#D5FC51] hover:shadow-md"
           >
             <div className="flex flex-col space-y-4">
               <div className="flex items-center justify-between">
-                <BellIcon className="h-6 w-6 text-[#D9D9D9] group-hover:text-[#D5FC51] transition-colors" />
-                <span className="text-xs font-medium text-[#D9D9D9] uppercase tracking-wider">Alerts</span>
+                <BellIcon className="h-7 w-7 text-[#2A2A2A] group-hover:text-[#D5FC51] transition-colors" />
+                <span className="text-sm font-semibold text-[#2A2A2A] uppercase tracking-wider">Alerts</span>
               </div>
               <div>
-                <p className="text-3xl font-light text-[#2A2A2A] mb-1">
+                <p className="text-4xl font-medium text-[#2A2A2A] mb-1">
                   {stats.totalNotifications}
                 </p>
-                <p className="text-sm text-[#D9D9D9] font-light">
+                <p className="text-sm text-[#2A2A2A] font-medium">
                   Notifications
                 </p>
               </div>
@@ -268,163 +257,116 @@ export default function Dashboard() {
           {/* Manage Trainers */}
           <Link
             href="/admin/manage-trainers"
-            className="group rounded-3xl bg-[#FFFFFF] border border-[#D9D9D9]/20 p-10 transition-all duration-200 hover:border-[#D5FC51]/30 hover:shadow-sm"
+            className="group rounded-3xl bg-[#FFFFFF] border-2 border-[#D9D9D9]/50 p-10 transition-all duration-200 hover:border-[#D5FC51] hover:shadow-md"
           >
             <div className="mb-6 flex items-center justify-between">
-              <UserGroupIcon className="h-8 w-8 text-[#D5FC51]" />
-              <span className="text-xs font-medium text-[#D9D9D9] uppercase tracking-wider">Management</span>
+              <UserGroupIcon className="h-10 w-10 text-[#2A2A2A] group-hover:text-[#D5FC51] transition-colors" />
+              <span className="text-sm font-semibold text-[#2A2A2A] uppercase tracking-wider">Management</span>
             </div>
-            <h3 className="text-2xl font-light text-[#2A2A2A] mb-3">Manage Trainers</h3>
-            <p className="text-[#D9D9D9] font-light leading-relaxed mb-6">
+            <h3 className="text-2xl font-medium text-[#2A2A2A] mb-3">Manage Trainers</h3>
+            <p className="text-[#2A2A2A] font-normal leading-relaxed mb-6">
               View, edit, and remove approved trainers from the platform.
             </p>
             <div className="flex items-center text-[#D5FC51] group-hover:text-[#2A2A2A] transition-colors">
-              <span className="text-sm font-medium">Manage →</span>
+              <span className="mr-2 font-medium">View trainers</span>
+              <ArrowTrendingUpIcon className="h-5 w-5" />
             </div>
           </Link>
 
           {/* Trainer Applications */}
           <Link
             href="/admin/trainer-applications"
-            className="group rounded-3xl bg-[#FFFFFF] border border-[#D9D9D9]/20 p-10 transition-all duration-200 hover:border-[#D5FC51]/30 hover:shadow-sm"
+            className="group rounded-3xl bg-[#FFFFFF] border-2 border-[#D9D9D9]/50 p-10 transition-all duration-200 hover:border-[#D5FC51] hover:shadow-md"
           >
             <div className="mb-6 flex items-center justify-between">
-              <DocumentTextIcon className="h-8 w-8 text-[#D5FC51]" />
-              <span className="text-xs font-medium text-[#D9D9D9] uppercase tracking-wider">Applications</span>
+              <DocumentTextIcon className="h-10 w-10 text-[#2A2A2A] group-hover:text-[#D5FC51] transition-colors" />
+              <span className="text-sm font-semibold text-[#2A2A2A] uppercase tracking-wider">Applications</span>
             </div>
-            <h3 className="text-2xl font-light text-[#2A2A2A] mb-3">Trainer Applications</h3>
-            <p className="text-[#D9D9D9] font-light leading-relaxed mb-6">
+            <h3 className="text-2xl font-medium text-[#2A2A2A] mb-3">Trainer Applications</h3>
+            <p className="text-[#2A2A2A] font-normal leading-relaxed mb-6">
               Review and approve pending trainer applications.
             </p>
             <div className="flex items-center text-[#D5FC51] group-hover:text-[#2A2A2A] transition-colors">
-              <span className="text-sm font-medium">Review →</span>
+              <span className="mr-2 font-medium">Review applications</span>
+              <ArrowTrendingUpIcon className="h-5 w-5" />
             </div>
           </Link>
 
           {/* User Management */}
           <Link
             href="/dashboard/users"
-            className="group rounded-3xl bg-[#FFFFFF] border border-[#D9D9D9]/20 p-10 transition-all duration-200 hover:border-[#D5FC51]/30 hover:shadow-sm"
+            className="group rounded-3xl bg-[#FFFFFF] border-2 border-[#D9D9D9]/50 p-10 transition-all duration-200 hover:border-[#D5FC51] hover:shadow-md"
           >
             <div className="mb-6 flex items-center justify-between">
-              <UserIcon className="h-8 w-8 text-[#D5FC51]" />
-              <span className="text-xs font-medium text-[#D9D9D9] uppercase tracking-wider">Users</span>
+              <UserIcon className="h-10 w-10 text-[#2A2A2A] group-hover:text-[#D5FC51] transition-colors" />
+              <span className="text-sm font-semibold text-[#2A2A2A] uppercase tracking-wider">Users</span>
             </div>
-            <h3 className="text-2xl font-light text-[#2A2A2A] mb-3">User Management</h3>
-            <p className="text-[#D9D9D9] font-light leading-relaxed mb-6">
+            <h3 className="text-2xl font-medium text-[#2A2A2A] mb-3">User Management</h3>
+            <p className="text-[#2A2A2A] font-normal leading-relaxed mb-6">
               Manage user accounts, roles, and permissions.
             </p>
             <div className="flex items-center text-[#D5FC51] group-hover:text-[#2A2A2A] transition-colors">
-              <span className="text-sm font-medium">Manage →</span>
+              <span className="mr-2 font-medium">Manage users</span>
+              <ArrowTrendingUpIcon className="h-5 w-5" />
+            </div>
+          </Link>
+
+          {/* Memberships */}
+          <Link
+            href="/admin/memberships"
+            className="group rounded-3xl bg-[#FFFFFF] border-2 border-[#D9D9D9]/50 p-10 transition-all duration-200 hover:border-[#D5FC51] hover:shadow-md"
+          >
+            <div className="mb-6 flex items-center justify-between">
+              <CreditCardIcon className="h-10 w-10 text-[#2A2A2A] group-hover:text-[#D5FC51] transition-colors" />
+              <span className="text-sm font-semibold text-[#2A2A2A] uppercase tracking-wider">Memberships</span>
+            </div>
+            <h3 className="text-2xl font-medium text-[#2A2A2A] mb-3">Membership Plans</h3>
+            <p className="text-[#2A2A2A] font-normal leading-relaxed mb-6">
+              Manage membership plans and subscriptions.
+            </p>
+            <div className="flex items-center text-[#D5FC51] group-hover:text-[#2A2A2A] transition-colors">
+              <span className="mr-2 font-medium">Manage plans</span>
+              <ArrowTrendingUpIcon className="h-5 w-5" />
             </div>
           </Link>
 
           {/* Shop Management */}
           <Link
             href="/admin/shop"
-            className="group rounded-xl border border-gray-200 bg-white p-8 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-[#D5FC51]/50"
+            className="group rounded-3xl bg-[#FFFFFF] border-2 border-[#D9D9D9]/50 p-10 transition-all duration-200 hover:border-[#D5FC51] hover:shadow-md"
           >
-            <div className="mb-4 flex items-center">
-              <ShoppingBagIcon className="mr-3 h-8 w-8 text-[#D5FC51]" />
-              <h3 className="text-xl font-bold text-[#2A2A2A]">Shop Management</h3>
+            <div className="mb-6 flex items-center justify-between">
+              <ShoppingBagIcon className="h-10 w-10 text-[#2A2A2A] group-hover:text-[#D5FC51] transition-colors" />
+              <span className="text-sm font-semibold text-[#2A2A2A] uppercase tracking-wider">Shop</span>
             </div>
-            <p className="mb-4 text-gray-600">
-              Manage products, categories, bundles, and coupons.
+            <h3 className="text-2xl font-medium text-[#2A2A2A] mb-3">Shop Management</h3>
+            <p className="text-[#2A2A2A] font-normal leading-relaxed mb-6">
+              Manage products, categories, and orders.
             </p>
-            <div className="flex items-center text-[#D5FC51] transition-colors group-hover:text-[#2A2A2A]">
-              <span className="text-sm font-medium">Manage Shop →</span>
+            <div className="flex items-center text-[#D5FC51] group-hover:text-[#2A2A2A] transition-colors">
+              <span className="mr-2 font-medium">Manage shop</span>
+              <ArrowTrendingUpIcon className="h-5 w-5" />
             </div>
           </Link>
 
-          {/* Order Bills */}
+          {/* Promotions */}
           <Link
-            href="/admin/order-bills"
-            className="group rounded-xl border border-gray-200 bg-white p-8 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-[#D5FC51]/50"
+            href="/admin/promotions"
+            className="group rounded-3xl bg-[#FFFFFF] border-2 border-[#D9D9D9]/50 p-10 transition-all duration-200 hover:border-[#D5FC51] hover:shadow-md"
           >
-            <div className="mb-4 flex items-center">
-              <ReceiptPercentIcon className="mr-3 h-8 w-8 text-[#D5FC51]" />
-              <h3 className="text-xl font-bold text-[#2A2A2A]">Order Bills</h3>
+            <div className="mb-6 flex items-center justify-between">
+              <ReceiptPercentIcon className="h-10 w-10 text-[#2A2A2A] group-hover:text-[#D5FC51] transition-colors" />
+              <span className="text-sm font-semibold text-[#2A2A2A] uppercase tracking-wider">Promotions</span>
             </div>
-            <p className="mb-4 text-gray-600">
-              View and manage customer orders and billing.
+            <h3 className="text-2xl font-medium text-[#2A2A2A] mb-3">Coupons & Deals</h3>
+            <p className="text-[#2A2A2A] font-normal leading-relaxed mb-6">
+              Create and manage promotional offers and discount codes.
             </p>
-            <div className="flex items-center text-[#D5FC51] transition-colors group-hover:text-[#2A2A2A]">
-              <span className="text-sm font-medium">View Orders →</span>
+            <div className="flex items-center text-[#D5FC51] group-hover:text-[#2A2A2A] transition-colors">
+              <span className="mr-2 font-medium">Manage promotions</span>
+              <ArrowTrendingUpIcon className="h-5 w-5" />
             </div>
           </Link>
-
-          {/* Reports */}
-          <Link
-            href="/dashboard/reports"
-            className="group rounded-xl border border-gray-200 bg-white p-8 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-[#D5FC51]/50"
-          >
-            <div className="mb-4 flex items-center">
-              <ChartBarIcon className="mr-3 h-8 w-8 text-[#D5FC51]" />
-              <h3 className="text-xl font-bold text-[#2A2A2A]">
-                Reports & Analytics
-              </h3>
-            </div>
-            <p className="mb-4 text-gray-600">
-              View platform analytics and generate reports.
-            </p>
-            <div className="flex items-center text-[#D5FC51] transition-colors group-hover:text-[#2A2A2A]">
-              <span className="text-sm font-medium">View Reports →</span>
-            </div>
-          </Link>
-
-          {/* Settings */}
-          <Link
-            href="/admin/platform-settings"
-            className="group rounded-xl border border-gray-200 bg-white p-8 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-[#D5FC51]/50"
-          >
-            <div className="mb-4 flex items-center">
-              <CogIcon className="mr-3 h-8 w-8 text-[#D5FC51]" />
-              <h3 className="text-xl font-bold text-[#2A2A2A]">
-                Platform Settings
-              </h3>
-            </div>
-            <p className="mb-4 text-gray-600">
-              Configure platform settings and preferences.
-            </p>
-            <div className="flex items-center text-[#D5FC51] transition-colors group-hover:text-[#2A2A2A]">
-              <span className="text-sm font-medium">Manage Settings →</span>
-            </div>
-          </Link>
-
-
-          {/* Quick Actions */}
-          <div className="rounded-xl border border-gray-200 bg-white p-8 shadow-lg">
-            <div className="mb-4 flex items-center">
-              <CheckCircleIcon className="mr-3 h-8 w-8 text-[#D5FC51]" />
-              <h3 className="text-xl font-bold text-[#2A2A2A]">Quick Actions</h3>
-            </div>
-            <div className="space-y-3">
-              <Link
-                href="/admin/trainer-applications"
-                className="block text-sm text-gray-600 transition-colors hover:text-[#D5FC51]"
-              >
-                • Review pending applications
-              </Link>
-              <Link
-                href="/admin/shop/products"
-                className="block text-sm text-gray-600 transition-colors hover:text-[#D5FC51]"
-              >
-                • Add new products
-              </Link>
-              <Link
-                href="/admin/order-bills"
-                className="block text-sm text-gray-600 transition-colors hover:text-[#D5FC51]"
-              >
-                • Process pending orders
-              </Link>
-              <Link
-                href="/dashboard/users"
-                className="block text-sm text-gray-600 transition-colors hover:text-[#D5FC51]"
-              >
-                • Update user roles
-              </Link>
-            </div>
-          </div>
         </div>
 
         {/* Real-time Activity & Insights */}
@@ -432,20 +374,20 @@ export default function Dashboard() {
           {/* Recent Notifications */}
           <div
             id="notifications-section"
-            className="rounded-3xl bg-[#2A2A2A] p-10"
+            className="rounded-3xl bg-[#FFFFFF] border-2 border-[#D9D9D9]/50 p-10 transition-all duration-200 hover:border-[#D5FC51] hover:shadow-md"
           >
             <div className="mb-8 flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="rounded-full bg-[#D5FC51]/20 p-3">
                   <BellIcon className="h-6 w-6 text-[#D5FC51]" />
                 </div>
-                <h3 className="text-2xl font-light text-[#FFFFFF]">
+                <h3 className="text-2xl font-medium text-[#2A2A2A]">
                   Recent Notifications
                 </h3>
               </div>
               <Link
                 href="/admin/notifications"
-                className="cursor-pointer text-sm font-medium text-[#D5FC51] transition-colors hover:text-[#FFFFFF]"
+                className="cursor-pointer text-sm font-medium text-[#D5FC51] transition-colors hover:text-[#2A2A2A]"
               >
                 View All →
               </Link>
@@ -456,7 +398,7 @@ export default function Dashboard() {
                   <Link
                     key={notification.id}
                     href="/admin/notifications"
-                    className="flex items-start space-x-4 rounded-2xl bg-[#FFFFFF]/5 p-4 transition-all duration-200 hover:bg-[#FFFFFF]/10 cursor-pointer border border-[#FFFFFF]/10"
+                    className="flex items-start space-x-4 rounded-2xl bg-[#F5F5F5] p-4 transition-all duration-200 hover:bg-[#F0F0F0] cursor-pointer border border-[#D9D9D9]/30"
                   >
                     <div className="flex-shrink-0">
                       {notification.type === "trainer_application" && (
@@ -494,17 +436,17 @@ export default function Dashboard() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between">
-                        <p className="truncate text-sm font-medium text-[#FFFFFF]">
+                        <p className="truncate text-sm font-medium text-[#2A2A2A]">
                           {notification.title}
                         </p>
                         {!notification.isRead && (
                           <span className="ml-2 h-2 w-2 rounded-full bg-[#D5FC51]"></span>
                         )}
                       </div>
-                      <p className="mt-2 line-clamp-2 text-sm text-[#D9D9D9] font-light">
+                      <p className="mt-2 line-clamp-2 text-sm text-[#2A2A2A]">
                         {notification.message}
                       </p>
-                      <p className="mt-2 text-xs text-[#D9D9D9]/70 font-light">
+                      <p className="mt-2 text-xs text-[#2A2A2A]/70">
                         {new Date(notification.createdAt).toLocaleDateString()}
                       </p>
                     </div>
@@ -512,10 +454,10 @@ export default function Dashboard() {
                 ))
               ) : (
                 <div className="py-12 text-center">
-                  <div className="rounded-full bg-[#D9D9D9]/10 p-6 mx-auto w-fit mb-4">
-                    <BellIcon className="h-8 w-8 text-[#D9D9D9]/50" />
+                  <div className="rounded-full bg-[#F5F5F5] p-6 mx-auto w-fit mb-4">
+                    <BellIcon className="h-8 w-8 text-[#2A2A2A]/50" />
                   </div>
-                  <p className="text-[#D9D9D9] font-light">No recent notifications</p>
+                  <p className="text-[#2A2A2A] font-normal">No recent notifications</p>
                 </div>
               )}
             </div>

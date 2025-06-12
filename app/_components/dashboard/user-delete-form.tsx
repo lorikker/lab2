@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { deleteUser } from "@/app/lib/actions";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState, useFormStatus } from "react-dom";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 type User = {
@@ -27,7 +27,7 @@ function DeleteButton() {
 
 export default function UserDeleteForm({ user, onClose }: { user: User; onClose: () => void }) {
   const initialState = { message: null, errors: {}, success: false };
-  const [state, dispatch] = useFormState(deleteUser, initialState);
+  const [state, dispatch] = useActionState(deleteUser, initialState);
 
   // Close modal on success
   useEffect(() => {
