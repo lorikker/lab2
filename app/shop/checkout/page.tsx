@@ -26,7 +26,7 @@ export default async function CheckoutPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start bg-white pt-14 pb-14 font-sans">
+    <main className="flex min-h-screen flex-col items-center justify-start bg-white pt-24 pb-14 font-sans">
       <div className="container mx-auto">
         <h1 className="mb-8 text-3xl font-bold text-[#2A2A2A]">Checkout</h1>
 

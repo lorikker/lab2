@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <main className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative -mt-20 flex min-h-screen items-center justify-center bg-[#2A2A2A] pt-20 text-white">
+      <section className="relative -mt-20 flex min-h-screen items-center justify-center bg-[#2A2A2A] text-white">
         <Image
           src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80"
           alt="Fitness background"
@@ -25,15 +25,15 @@ export default function Home() {
           className="object-cover opacity-30"
           quality={75}
         />
-        <div className="container relative z-10 text-center">
-          <h1 className="mb-6 text-5xl font-bold leading-tight md:text-6xl lg:text-7xl">
+        <div className="relative z-10 container text-center">
+          <h1 className="mb-6 text-5xl leading-tight font-bold md:text-6xl lg:text-7xl">
             Ultimate Fitness <span className="text-[#D5FC51]">Experience</span>
           </h1>
           <p className="mx-auto mb-10 max-w-2xl text-lg text-[#D9D9D9]">
             Transform your body and mind with our state-of-the-art facilities
             and expert trainers. Start your fitness journey today.
           </p>
-          <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+          <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
             <Link href="/membership" className="btn btn-primary">
               View Membership Plans
             </Link>
@@ -48,7 +48,7 @@ export default function Home() {
       <section className="section bg-white">
         <div className="container">
           <div className="mb-12 text-center">
-            <span className="mb-2 inline-block text-sm uppercase tracking-wider text-[#2A2A2A]">
+            <span className="mb-2 inline-block text-sm tracking-wider text-[#2A2A2A] uppercase">
               what we offer
             </span>
             <h2 className="text-3xl font-bold text-[#2A2A2A] md:text-4xl">
@@ -110,9 +110,9 @@ export default function Home() {
           </svg>
         </div>
 
-        <div className="container relative z-10">
+        <div className="relative z-10 container">
           <div className="mb-12 text-center">
-            <span className="mb-2 inline-block text-sm uppercase tracking-wider text-[#D5FC51]">
+            <span className="mb-2 inline-block text-sm tracking-wider text-[#D5FC51] uppercase">
               about us
             </span>
             <h2 className="mb-6 text-3xl font-bold text-white md:text-4xl">
@@ -135,7 +135,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#2A2A2A] to-transparent opacity-60"></div>
 
                 {/* Working hours card positioned at the bottom of the image */}
-                <div className="absolute bottom-0 left-0 right-0 bg-[#2A2A2A]/80 p-4 backdrop-blur-sm">
+                <div className="absolute right-0 bottom-0 left-0 bg-[#2A2A2A]/80 p-4 backdrop-blur-sm">
                   <h4 className="mb-3 text-lg font-semibold text-[#D5FC51]">
                     Working Hours
                   </h4>
@@ -203,7 +203,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+                <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
                   <Link
                     href="/about"
                     className="btn bg-[#D5FC51] text-[#2A2A2A] hover:opacity-90"
@@ -226,7 +226,7 @@ export default function Home() {
       <section className="section bg-white">
         <div className="container">
           <div className="mb-12 text-center">
-            <span className="mb-2 inline-block text-sm uppercase tracking-wider text-[#2A2A2A]">
+            <span className="mb-2 inline-block text-sm tracking-wider text-[#2A2A2A] uppercase">
               membership plans
             </span>
             <h2 className="mb-4 text-3xl font-bold text-[#2A2A2A] md:text-4xl">
@@ -280,7 +280,7 @@ export default function Home() {
       <section className="section bg-white">
         <div className="container">
           <div className="mb-12 text-center">
-            <span className="mb-2 inline-block text-sm uppercase tracking-wider text-[#2A2A2A]">
+            <span className="mb-2 inline-block text-sm tracking-wider text-[#2A2A2A] uppercase">
               health calculator
             </span>
             <h2 className="mb-4 text-3xl font-bold text-[#2A2A2A] md:text-4xl">
@@ -309,10 +309,10 @@ export default function Home() {
             healthier, stronger you.
           </p>
           <Link
-            href="/dashboard"
+            href="/membership"
             className="btn bg-[#2A2A2A] text-white hover:opacity-90"
           >
-            Go to Dashboard
+            View Membership Plans
           </Link>
         </div>
       </section>
