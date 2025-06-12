@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 
 export default function CartIcon() {
+  const { data: session, status } = useSession();
   const [itemCount, setItemCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -23,7 +25,7 @@ export default function CartIcon() {
         if (cart) {
           // Calculate total number of items in cart
           const count = cart.items.reduce(
-            (total, item) => total + item.quantity,
+            (total: number, item: any) => total + item.quantity,
             0,
           );
           setItemCount(count);
@@ -38,7 +40,17 @@ export default function CartIcon() {
       }
     }
 
-    getCartItemCount();
+    // Clear cart when user logs out
+    if (status === "unauthenticated") {
+      setItemCount(0);
+      setIsLoading(false);
+      return;
+    }
+
+    // Only fetch cart if user is authenticated or loading
+    if (status === "authenticated" || status === "loading") {
+      getCartItemCount();
+    }
 
     // Set up an interval to refresh the cart count every 30 seconds
     const intervalId = setInterval(getCartItemCount, 30000);
@@ -48,13 +60,21 @@ export default function CartIcon() {
       getCartItemCount();
     };
 
+    // Listen for logout events to immediately clear cart
+    const handleLogout = () => {
+      setItemCount(0);
+      setIsLoading(false);
+    };
+
     window.addEventListener("cartUpdated", handleCartUpdate);
+    window.addEventListener("userLoggedOut", handleLogout);
 
     return () => {
       clearInterval(intervalId);
       window.removeEventListener("cartUpdated", handleCartUpdate);
+      window.removeEventListener("userLoggedOut", handleLogout);
     };
-  }, []);
+  }, [status]); // Re-run when authentication status changes
 
   return (
     <Link

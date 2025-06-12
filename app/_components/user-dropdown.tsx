@@ -40,6 +40,10 @@ export default function UserDropdown() {
     revokeAdminAccess();
 
     await signOut({ redirect: false });
+
+    // Clear cart state by dispatching a custom event
+    window.dispatchEvent(new CustomEvent("userLoggedOut"));
+
     router.push("/");
     router.refresh();
   };
