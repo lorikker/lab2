@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { Button } from "../_components/button";
 import PasswordInput from "../_components/password-input";
+import ProfileForm from "../_components/profile-form";
 
 export const metadata = {
   title: "Settings - SixStarFitness",
@@ -11,7 +12,7 @@ export const metadata = {
 export default async function SettingsPage() {
   const session = await auth();
 
-  if (!session) {
+  if (!session || !session.user) {
     redirect("/login");
   }
 
@@ -25,39 +26,9 @@ export default async function SettingsPage() {
             Account Settings
           </h2>
 
-          <div className="mb-6 space-y-4">
-            <div>
-              <label
-                htmlFor="name"
-                className="mb-2 block text-sm font-medium text-[#2A2A2A]"
-              >
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                className="w-full rounded-md border border-[#D9D9D9] p-2 focus:border-[#D5FC51] focus:ring-1 focus:ring-[#D5FC51] focus:outline-none"
-                defaultValue={session.user?.name || ""}
-              />
-            </div>
+          <ProfileForm user={session.user} />
 
-            <div>
-              <label
-                htmlFor="email"
-                className="mb-2 block text-sm font-medium text-[#2A2A2A]"
-              >
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                className="w-full rounded-md border border-[#D9D9D9] p-2 focus:border-[#D5FC51] focus:ring-1 focus:ring-[#D5FC51] focus:outline-none"
-                defaultValue={session.user?.email || ""}
-              />
-            </div>
-          </div>
-
-          <h2 className="mb-6 text-xl font-semibold text-[#2A2A2A]">
+          <h2 className="mt-8 mb-6 text-xl font-semibold text-[#2A2A2A]">
             Password
           </h2>
 
