@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <main className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative -mt-20 flex min-h-screen items-center justify-center bg-[#2A2A2A] pt-20 text-white">
+      <section className="relative -mt-20 flex min-h-screen items-center justify-center bg-[#2A2A2A] text-white">
         <Image
           src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80"
           alt="Fitness background"

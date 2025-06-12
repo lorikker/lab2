@@ -108,17 +108,17 @@ export default function Header() {
   return (
     <header
       className={cn(
-        "fixed left-0 right-0 top-0 z-50 h-20 w-full shadow-lg",
+        "fixed top-0 right-0 left-0 z-50 h-20 w-full shadow-lg",
         scrolled
           ? "bg-[#2A2A2A]/95 backdrop-blur-sm"
           : "bg-[#2A2A2A]/80 backdrop-blur-sm",
       )}
     >
-      <div className="container mx-auto flex h-full items-center justify-between px-4">
+      <div className="container mx-auto flex h-full items-center justify-between px-6 md:px-8">
         <div className="flex items-center">
           <Link
             href="/"
-            className="mr-8 whitespace-nowrap text-2xl font-bold text-[#D5FC51]"
+            className="mr-8 text-2xl font-bold whitespace-nowrap text-[#D5FC51]"
           >
             SixStar Fitness
           </Link>
@@ -170,7 +170,7 @@ export default function Header() {
       {mobileMenuOpen && (
         <div
           id="mobile-menu"
-          className="absolute left-0 top-full w-full bg-[#2A2A2A]/95 px-4 py-2 shadow-lg backdrop-blur-sm md:hidden"
+          className="absolute top-full left-0 w-full bg-[#2A2A2A]/95 px-6 py-2 shadow-lg backdrop-blur-sm md:hidden md:px-8"
         >
           <div className="flex flex-col space-y-1">
             {renderLink("/", HomeIcon, "Home", [], true)}

@@ -225,7 +225,7 @@ export default function TrainerApplicationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#2A2A2A] via-gray-800 to-gray-900 pt-20">
+    <div className="min-h-screen bg-gradient-to-br from-[#2A2A2A] via-gray-800 to-gray-900">
       <div className="container mx-auto px-4 py-8">
         {/* Back Button */}
         <Link
