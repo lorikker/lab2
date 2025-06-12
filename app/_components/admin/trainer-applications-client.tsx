@@ -35,7 +35,7 @@ interface TrainerApplication {
   reviewedBy?: string;
 }
 
-export default function TrainerApplicationsPage() {
+export default function TrainerApplicationsClient() {
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -59,7 +59,7 @@ export default function TrainerApplicationsPage() {
   };
 
   useEffect(() => {
-    // Check if user is admin (you can implement your own admin check logic)
+    // Check if user is admin
     if (!session) {
       router.push("/login");
       return;

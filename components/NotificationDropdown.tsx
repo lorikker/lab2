@@ -263,13 +263,15 @@ export default function NotificationDropdown() {
   };
 
   // WebSocket connection for real-time notifications
-  const { isConnected } = useWebSocket({
-    onNotification: (newNotification) => {
-      console.log("Received real-time notification:", newNotification);
+  const { isConnected, subscribeToNotifications } = useWebSocket();
+
+  useEffect(() => {
+    const unsubscribe = subscribeToNotifications((newNotification) => {
       setNotifications((prev) => [newNotification, ...prev]);
       setUnreadCount((prev) => prev + 1);
-    },
-  });
+    });
+    return unsubscribe;
+  }, [subscribeToNotifications]);
 
   // Fetch notifications on component mount and when session changes
   useEffect(() => {
@@ -293,7 +295,7 @@ export default function NotificationDropdown() {
       >
         <BellIcon className="h-6 w-6" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
@@ -310,7 +312,7 @@ export default function NotificationDropdown() {
                 <button
                   onClick={markAllAsRead}
                   className="text-sm text-[#D5FC51] transition-colors hover:text-green-400 hover:underline"
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: "pointer" }}
                 >
                   Mark all read
                 </button>
@@ -318,7 +320,7 @@ export default function NotificationDropdown() {
               <button
                 onClick={() => setIsOpen(false)}
                 className="text-gray-400 transition-colors hover:text-white"
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: "pointer" }}
               >
                 <XMarkIcon className="h-5 w-5" />
               </button>
@@ -346,7 +348,7 @@ export default function NotificationDropdown() {
                   className={`border-b border-gray-600 p-4 transition-colors hover:bg-gray-600/50 ${
                     !notification.isRead ? "bg-gray-600/30" : ""
                   }`}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: "pointer" }}
                   onClick={() => handleNotificationClick(notification)}
                 >
                   <div className="flex items-start space-x-3">
@@ -386,7 +388,7 @@ export default function NotificationDropdown() {
                   // You can add navigation to a full notifications page here
                 }}
                 className="text-sm text-[#D5FC51] transition-colors hover:text-green-400 hover:underline"
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: "pointer" }}
               >
                 View all notifications
               </button>
