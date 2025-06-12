@@ -298,23 +298,63 @@ export default function TrainerCheckoutPage() {
       const { paymentIntentId, invoiceNumber, orderNumber } =
         await response.json();
 
-      // TEMPORARY: Simulate successful payment for testing
-      // In real implementation, you would use Stripe Elements here
-      console.log("Simulating successful payment...");
+      // Process payment on server side
+      console.log("Processing payment...");
 
-      // Mark payment as succeeded in Stripe (for testing)
-      const simulateResponse = await fetch("/api/simulate-payment-success", {
+      // Validate card inputs
+      if (!formData.cardNumber || !formData.expiryDate || !formData.cvv) {
+        throw new Error("Please fill in all card details");
+      }
+
+      // Parse expiry date
+      const expiryParts = formData.expiryDate.split("/");
+      if (expiryParts.length !== 2) {
+        throw new Error("Invalid expiry date format. Use MM/YY");
+      }
+
+      const expMonth = parseInt(expiryParts[0] || "0");
+      const expYear = parseInt("20" + (expiryParts[1] || "0"));
+
+      if (isNaN(expMonth) || isNaN(expYear) || expMonth < 1 || expMonth > 12) {
+        throw new Error("Invalid expiry date");
+      }
+
+      // Process payment on server
+      const paymentResponse = await fetch("/api/process-trainer-payment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           paymentIntentId: paymentIntentId,
+          cardData: {
+            number: formData.cardNumber.replace(/\s/g, ""),
+            exp_month: expMonth,
+            exp_year: expYear,
+            cvc: formData.cvv,
+          },
+          billingDetails: {
+            name: formData.cardName,
+            email: formData.email,
+            address: {
+              line1: formData.address,
+              city: formData.city,
+              postal_code: formData.zipCode,
+              country: formData.country,
+            },
+          },
         }),
       });
 
-      if (!simulateResponse.ok) {
-        console.log("Payment simulation failed, but continuing...");
+      if (!paymentResponse.ok) {
+        const errorData = await paymentResponse.json();
+        throw new Error(errorData.error || "Payment processing failed");
+      }
+
+      const paymentResult = await paymentResponse.json();
+
+      if (!paymentResult.success) {
+        throw new Error(paymentResult.error || "Payment failed");
       }
 
       // Process the booking
